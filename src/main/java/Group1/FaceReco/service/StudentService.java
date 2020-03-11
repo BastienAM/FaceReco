@@ -17,29 +17,9 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import Group1.FaceReco.domain.Test;
-import Group1.FaceReco.domain.TestRepository;
-
 @Service
 @Path("/student")
 public class StudentService {
-
-    @Autowired
-    private TestRepository repository;
-	
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getAllStudent() {
-		System.out.println("getAllStudent");
-		
-		Iterator<Test> it = repository.findAll().iterator();
-		
-		while(it.hasNext()) {
-			System.out.println(it.next().toString());
-		}
-		
-		return "test";
-	}
 	
 	@POST
 	@Path("/addImage")
