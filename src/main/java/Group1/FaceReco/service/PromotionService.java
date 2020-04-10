@@ -1,6 +1,5 @@
 package Group1.FaceReco.service;
 
-import java.util.Iterator;
 import java.util.Optional;
 
 import javax.ws.rs.Consumes;
@@ -24,44 +23,43 @@ import Group1.FaceReco.repository.PromotionRepository;
 public class PromotionService {
 	
 	@Autowired
-	private PromotionRepository repositoryPromotion;
+	private PromotionRepository promotionRepository;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Iterator<Promotion> getAllPromotion() {
-		Iterator<Promotion> it = repositoryPromotion.findAll().iterator();
-		return it;
+	public Iterable<Promotion> getAllPromotion() {
+		return promotionRepository.findAll();
 	}
 	
 	@GET
 	@Path("/{id_promotion}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Optional<Promotion> getPromotionById(@PathParam("id_promotion") long id) {
-		return repositoryPromotion.findById(id);
+		return promotionRepository.findById(id);
 	}
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void createPromotion(Promotion elem) {
-		repositoryPromotion.save(elem);
+		promotionRepository.save(elem);
 	}
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void updatePromotion(Promotion elem) {
-		repositoryPromotion.save(elem);
+		promotionRepository.save(elem);
 	}
 	
 	@DELETE
 	@Path("/{id_promotion}")
 	public void deletePromotion(@PathParam("id_promotion") long id) {
 		
-		Optional<Promotion> optionalPromotion = repositoryPromotion.findById(id);
+		Optional<Promotion> optionalPromotion = promotionRepository.findById(id);
 		
 		if(optionalPromotion.isPresent()) {
 			Promotion promotion = optionalPromotion.get();
 			if(promotion.getGroup().size() == 0) {
-				repositoryPromotion.deleteById(id);
+				promotionRepository.deleteById(id);
 			}
 		}
 	}

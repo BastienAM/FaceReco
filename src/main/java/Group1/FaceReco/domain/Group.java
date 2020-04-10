@@ -1,12 +1,16 @@
 package Group1.FaceReco.domain;
 
 import java.io.Serializable;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -15,7 +19,7 @@ public class Group implements Serializable {
 	private long id;
 	private String wording;
 	private Promotion promotion;
-	//private Set<Student> student;
+	private Set<Student> student;
 
 	@Id
 	@GeneratedValue
@@ -37,8 +41,6 @@ public class Group implements Serializable {
 	}
 
 	@ManyToOne(optional=false)
-	//@ManyToOne()
-	// @JoinColumn(name="fk_promotion", nullable=false)
 	@JoinColumn(name = "fk_promotion", nullable = false)
 	@JsonIgnoreProperties("group")
 	public Promotion getPromotion() {
@@ -48,8 +50,8 @@ public class Group implements Serializable {
 	public void setPromotion(Promotion promotion) {
 		this.promotion = promotion;
 	}
-/*
-	@OneToMany(mappedBy = "group")
+	@OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
+	@JsonIgnoreProperties({"group", "presence", "signature"})
 	public Set<Student> getStudent() {
 		return student;
 	}
@@ -57,5 +59,4 @@ public class Group implements Serializable {
 	public void setStudent(Set<Student> student) {
 		this.student = student;
 	}
-*/
 }
