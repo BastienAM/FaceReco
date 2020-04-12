@@ -15,53 +15,48 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import Group1.FaceReco.domain.Group;
-import Group1.FaceReco.repository.GroupRepository;
+import Group1.FaceReco.domain.Account;
+import Group1.FaceReco.repository.AccountRepository;
 
 @Service
-@Path("/group")
-public class GroupService {
-	
+@Path("/user")
+public class AccountService {
 	@Autowired
-    private GroupRepository groupRepository;
-	
+	private AccountRepository accountRepository;
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Iterable<Group> getAll() {
-		return groupRepository.findAll();
+	public Iterable<Account> getAll() {
+		return accountRepository.findAll();
 	}
-	
+
 	@GET
 	@Path("/{id_group}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Optional<Group> getById(@PathParam("id_group") long id) {
-		return groupRepository.findById(id);
+	public Optional<Account> getById(@PathParam("id_group") long id) {
+		return accountRepository.findById(id);
 	}
-	
-	
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void create(Group elem) {
-		groupRepository.save(elem);
+	public void create(Account elem) {
+		accountRepository.save(elem);
 	}
-	
+
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void update(Group elem) {
-		groupRepository.save(elem);
+	public void update(Account elem) {
+		accountRepository.save(elem);
 	}
-	
+
 	@DELETE
 	@Path("/{id}")
 	public void delete(@PathParam("id") long id) {
-		
-		Optional<Group> optional = groupRepository.findById(id);
-		
-		if(optional.isPresent()) {
-			Group group = optional.get();
-			if(group.getStudent().size() == 0) {
-				groupRepository.deleteById(id);
-			}
+
+		Optional<Account> optional = accountRepository.findById(id);
+
+		if (optional.isPresent()) {
+			accountRepository.deleteById(id);
 		}
 	}
 }
