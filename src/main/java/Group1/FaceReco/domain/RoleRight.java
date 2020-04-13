@@ -38,8 +38,8 @@ public class RoleRight {
 	}
 	
 	@Transient
-	@JsonProperty("roleright_role")
-	@JsonIgnoreProperties({"role_roleright"})
+	@JsonProperty("role")
+	@JsonIgnoreProperties({"permission"})
 	public Role getRole() {
 		return getId().getRole();
 	}
@@ -48,8 +48,8 @@ public class RoleRight {
 	}
 	
 	@Transient
-	@JsonProperty("roleright_right")
-	@JsonIgnoreProperties({"right_roleright"})
+	@JsonProperty("right")
+	@JsonIgnoreProperties({"permission"})
 	public Right getRight() {
 		return getId().getRight();
 	}

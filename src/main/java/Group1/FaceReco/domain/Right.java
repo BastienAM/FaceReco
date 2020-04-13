@@ -39,8 +39,8 @@ public class Right {
 	}
 
 	@OneToMany(mappedBy = "id.right", fetch = FetchType.EAGER)
-	@JsonIgnoreProperties("roleright_right")
-	@JsonProperty("right_roleright")
+	@JsonIgnoreProperties("right")
+	@JsonProperty("permission")
 	public Set<RoleRight> getRoleRight() {
 		return roleRight;
 	}
