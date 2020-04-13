@@ -4,12 +4,14 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 public class Student {
@@ -18,7 +20,7 @@ public class Student {
 	private String lastName;
 	private String firstName;
 	private Group group;
-	//private Set<Presence> presence;
+	private Set<Presence> presence;
 	private Set<Signature> signature;
 
 	@Id
@@ -58,8 +60,10 @@ public class Student {
 	public void setGroup(Group group) {
 		this.group = group;
 	}
-/*
-	@OneToMany(mappedBy = "student")
+
+	@OneToMany(mappedBy = "id.student", fetch = FetchType.EAGER)
+	@JsonIgnoreProperties("student")
+	@JsonProperty("presence")
 	public Set<Presence> getPresence() {
 		return presence;
 	}
@@ -67,8 +71,9 @@ public class Student {
 	public void setPresence(Set<Presence> presence) {
 		this.presence = presence;
 	}
-*/
-	@OneToMany(mappedBy = "student")
+
+	@OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
+	@JsonIgnoreProperties("student")
 	public Set<Signature> getSignature() {
 		return signature;
 	}

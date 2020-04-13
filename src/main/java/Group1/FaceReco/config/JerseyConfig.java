@@ -9,6 +9,7 @@ import Group1.FaceReco.service.PromotionService;
 import Group1.FaceReco.service.RightService;
 import Group1.FaceReco.service.RoleService;
 import Group1.FaceReco.service.StudentService;
+import Group1.FaceReco.service.TimesheetService;
 
 @Configuration
 public class JerseyConfig extends ResourceConfig{
@@ -20,6 +21,7 @@ public class JerseyConfig extends ResourceConfig{
 		register(RoleService.class);
 		register(RightService.class);
 		register(AccountService.class);
+		register(TimesheetService.class);
 	}
 	
 }
