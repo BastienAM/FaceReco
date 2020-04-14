@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -41,7 +42,7 @@ public class Promotion implements Serializable {
 	}
 
 	@OneToMany(mappedBy="promotion", fetch = FetchType.EAGER)
-	@JsonIgnoreProperties("promotion")
+	@JsonIgnore
 	public Set<Group> getGroup() {
 		return group;
 	}

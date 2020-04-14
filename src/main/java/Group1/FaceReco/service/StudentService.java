@@ -5,8 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -18,10 +20,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import Group1.FaceReco.domain.Group;
+import Group1.FaceReco.domain.Promotion;
 import Group1.FaceReco.domain.Student;
+import Group1.FaceReco.repository.GroupRepository;
+import Group1.FaceReco.repository.PromotionRepository;
 import Group1.FaceReco.repository.StudentRepository;
 
 @Service
@@ -30,6 +37,10 @@ public class StudentService {
 	
 	@Autowired
     private StudentRepository studentRepository;
+	@Autowired
+	private GroupRepository groupRepository;
+	@Autowired
+	private PromotionRepository promotionRepository;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -69,6 +80,35 @@ public class StudentService {
 				studentRepository.deleteById(id);
 			}
 		}
+	}
+	
+	@GET
+	@Path("/group/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Set<Student> getByGroup(@PathParam("id") long id) {
+		Optional<Group> optional = groupRepository.findById(id);
+		
+		if(optional.isPresent()) {
+			Group group = optional.get();
+			return group.getStudent();
+		}
+		return null;
+	}
+	
+	@GET
+	@Path("/promotion/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Set<Student> getByPromotion(@PathParam("id") long id) {
+		Optional<Promotion> optional = promotionRepository.findById(id);
+		
+		if(optional.isPresent()) {
+			Set<Student> set = new HashSet<Student>();
+			for(Group group : optional.get().getGroup()) {
+				set.addAll(group.getStudent());
+			}
+			return set;
+		}
+		return null;
 	}
 	
 	

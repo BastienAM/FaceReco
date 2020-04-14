@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -64,6 +65,7 @@ public class Student {
 	@OneToMany(mappedBy = "id.student", fetch = FetchType.EAGER)
 	@JsonIgnoreProperties("student")
 	@JsonProperty("presence")
+	@JsonIgnore
 	public Set<Presence> getPresence() {
 		return presence;
 	}
@@ -74,6 +76,7 @@ public class Student {
 
 	@OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
 	@JsonIgnoreProperties("student")
+	@JsonIgnore
 	public Set<Signature> getSignature() {
 		return signature;
 	}

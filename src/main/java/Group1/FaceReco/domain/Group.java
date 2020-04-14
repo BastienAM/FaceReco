@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity(name = "group_student")
@@ -51,7 +52,7 @@ public class Group implements Serializable {
 		this.promotion = promotion;
 	}
 	@OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
-	@JsonIgnoreProperties({"group", "presence", "signature"})
+	@JsonIgnore
 	public Set<Student> getStudent() {
 		return student;
 	}
