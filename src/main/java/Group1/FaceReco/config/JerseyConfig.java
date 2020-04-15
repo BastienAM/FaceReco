@@ -1,5 +1,8 @@
 package Group1.FaceReco.config;
 
+import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.jaxrs.listing.ApiListingResource;
+import io.swagger.jaxrs.listing.SwaggerSerializers;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,7 +14,10 @@ import Group1.FaceReco.service.RoleService;
 import Group1.FaceReco.service.StudentService;
 import Group1.FaceReco.service.TimesheetService;
 
+import javax.ws.rs.ApplicationPath;
+
 @Configuration
+@ApplicationPath("/api")
 public class JerseyConfig extends ResourceConfig{
 
 	public JerseyConfig() {
@@ -22,6 +28,20 @@ public class JerseyConfig extends ResourceConfig{
 		register(RightService.class);
 		register(AccountService.class);
 		register(TimesheetService.class);
+		this.configureSwagger();
 	}
-	
+
+	private void configureSwagger () {
+		this.register(ApiListingResource.class);
+		this.register(SwaggerSerializers.class);
+
+		BeanConfig bean = new BeanConfig();
+		bean.setTitle("Face Reco API ");
+		bean.setSchemes(new String[]{"http","https"});
+		bean.setHost("localhost:8080");
+		bean.setBasePath("/api");
+		bean.setResourcePackage("Group1.FaceReco");
+		bean.setPrettyPrint(true);
+		bean.setScan(true);
+	}
 }
