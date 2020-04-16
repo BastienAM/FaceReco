@@ -11,7 +11,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ import Group1.FaceReco.repository.PromotionRepository;
 
 @Service
 @Path("/promotion")
+@Api("Promotion API")
 public class PromotionService {
 	
 	@Autowired
@@ -27,6 +30,7 @@ public class PromotionService {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Retourne les promotions présentes dans la base de données", response = Promotion.class)
 	public Iterable<Promotion> getAllPromotion() {
 		return promotionRepository.findAll();
 	}
@@ -34,25 +38,29 @@ public class PromotionService {
 	@GET
 	@Path("/{id_promotion}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Optional<Promotion> getPromotionById(@PathParam("id_promotion") long id) {
+	@ApiOperation(value = "Retourne la promotion correspondante à l'identifiant passé en paramètre", response = Promotion.class)
+	public Optional<Promotion> getPromotionById(@ApiParam(value = "L'identifiant de la promotion", required = true)@PathParam("id_promotion") long id) {
 		return promotionRepository.findById(id);
 	}
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void createPromotion(Promotion elem) {
+	@ApiOperation(value = "Ajoute une promotion dans la base de données")
+	public void createPromotion(@ApiParam(value = "La promotion à ajouter", required = true)Promotion elem) {
 		promotionRepository.save(elem);
 	}
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void updatePromotion(Promotion elem) {
+	@ApiOperation(value = "Modifie une promotion dans la base de données")
+	public void updatePromotion(@ApiParam(value = "La promotion à modifier", required = true)Promotion elem) {
 		promotionRepository.save(elem);
 	}
 	
 	@DELETE
 	@Path("/{id_promotion}")
-	public void deletePromotion(@PathParam("id_promotion") long id) {
+	@ApiOperation(value = "Supprime une promotion dans la base de données")
+	public void deletePromotion(@ApiParam(value = "L'identifiant de la promotion à supprimer", required = true)@PathParam("id_promotion") long id) {
 		
 		Optional<Promotion> optionalPromotion = promotionRepository.findById(id);
 		

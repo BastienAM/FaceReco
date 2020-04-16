@@ -12,6 +12,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import Group1.FaceReco.domain.Promotion;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import Group1.FaceReco.domain.Right;
@@ -19,6 +23,7 @@ import Group1.FaceReco.repository.RightRepository;
 
 @Service
 @Path("/right")
+@Api("Right API")
 public class RightService {
 
 	@Autowired
@@ -26,6 +31,7 @@ public class RightService {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Retourne les droits définis dans la base de données", response = Right.class)
 	public Iterable<Right> getAll() {
 		return rightRepository.findAll();
 	}
@@ -33,13 +39,15 @@ public class RightService {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Optional<Right> getById(@PathParam("id") long id) {
+	@ApiOperation(value = "Retourne le droit correspondant à l'identifiant passé en paramètre", response = Right.class)
+	public Optional<Right> getById(@ApiParam(value = "L'identifiant du droit", required = true)@PathParam("id") long id) {
 		return rightRepository.findById(id);
 	}
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void update(Right elem) {
+	@ApiOperation(value = "Modifie un droit dans la base de données")
+	public void update(@ApiParam(value = "Le droit à modifier", required = true)Right elem) {
 		rightRepository.save(elem);
 	}
 	

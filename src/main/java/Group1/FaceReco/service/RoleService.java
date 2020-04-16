@@ -12,6 +12,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,7 @@ public class RoleService {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Retourne les rôles définis dans la base de données", response = Role.class)
 	public Iterable<Role> getAll() {
 		return roleRepository.findAll();
 	}
@@ -34,26 +37,30 @@ public class RoleService {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Optional<Role> getById(@PathParam("id") long id) {
+	@ApiOperation(value = "Retourne le rôle correspondant à l'identifiant passé en paramètre", response = Role.class)
+	public Optional<Role> getById(@ApiParam(value = "L'identifiant du rôle", required = true) @PathParam("id") long id) {
 		return roleRepository.findById(id);
 	}
 	
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void create(Role elem) {
+	@ApiOperation(value = "Ajoute un rôle dans la base de données")
+	public void create(@ApiParam(value = "Le rôle à ajouter", required = true)Role elem) {
 		roleRepository.save(elem);
 	}
 	
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void update(Role elem) {
+	@ApiOperation(value = "Modifie un rôle dans la base de données")
+	public void update(@ApiParam(value = "Le rôle à modifier", required = true)Role elem) {
 		roleRepository.save(elem);
 	}
 	
 	@DELETE
 	@Path("/{id}")
-	public void delete(@PathParam("id") long id) {
+	@ApiOperation(value = "Supprime un rôle dans la base de données")
+	public void delete(@ApiParam(value = "L'identifiant du rôle à supprimer", required = true) @PathParam("id") long id) {
 		
 		Optional<Role> optional = roleRepository.findById(id);
 		
