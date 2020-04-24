@@ -1,7 +1,11 @@
 package Group1.FaceReco.service;
 
 import java.io.InputStream;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -17,7 +21,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import Group1.FaceReco.domain.Account;
+import Group1.FaceReco.domain.Presence;
+import Group1.FaceReco.domain.PresenceId;
+import Group1.FaceReco.domain.Student;
 import Group1.FaceReco.domain.Timesheet;
+import Group1.FaceReco.model.TimesheetModel;
+import Group1.FaceReco.repository.AccountRepository;
+import Group1.FaceReco.repository.StudentRepository;
 import Group1.FaceReco.repository.TimesheetRepository;
 
 @Service
@@ -26,6 +38,12 @@ public class TimesheetService {
 	
 	@Autowired
     private TimesheetRepository timesheetRepository;
+	
+	@Autowired
+	private StudentRepository studentRepository;
+	
+	@Autowired
+	private AccountRepository accountRepository;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -46,8 +64,26 @@ public class TimesheetService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Ajoute une feuille de présence dans la base de données")
-	public void create(@ApiParam(value = "La feuille de présence à ajouter", required = true) Timesheet elem) {
-		timesheetRepository.save(elem);
+	public void create(@ApiParam(value = "La feuille de présence à ajouter", required = true) TimesheetModel elem) {
+		System.out.println(elem.toString());
+		Timesheet timesheet = new Timesheet();
+		timesheet.setDate(Timestamp.valueOf(elem.getDate()));
+		Account account = accountRepository.findById((long)1).get();
+		
+		Set<Presence> presence = new HashSet<Presence>();
+		Iterable<Student> iterableStudent  = studentRepository.findAllById(elem.getStudent());
+		
+		for(Student student : iterableStudent) {
+			PresenceId pi = new PresenceId();
+			pi.setStudent(student);
+			pi.setTimesheet(timesheet);
+			Presence p = new Presence();
+			p.setId(pi);
+			presence.add(p);
+		}
+		timesheet.setPresence(presence);
+		timesheet.setAccount(account);
+		timesheetRepository.save(timesheet);
 	}
 	
 	@PUT

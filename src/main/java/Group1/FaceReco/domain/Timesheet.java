@@ -3,10 +3,12 @@ package Group1.FaceReco.domain;
 import java.sql.Timestamp;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,7 +25,7 @@ public class Timesheet {
 	private Set<Presence> presence;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="pk")
 	public long getId() {
 		return id;
@@ -51,7 +53,8 @@ public class Timesheet {
 		this.account = account;
 	}
 
-	@OneToMany(mappedBy = "id.timesheet", fetch = FetchType.EAGER)
+	//CascadeType.PERSIST permet d'enregistrer les presences a la création de la timesheet
+	@OneToMany(mappedBy = "id.timesheet",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@JsonIgnoreProperties({"timesheet", "signature"})
 	@JsonProperty("presence")
 	public Set<Presence> getPresence() {

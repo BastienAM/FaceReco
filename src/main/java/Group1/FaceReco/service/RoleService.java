@@ -66,9 +66,9 @@ public class RoleService {
 		
 		if(optional.isPresent()) {
 			Role role = optional.get();
-			/*if(group.getStudent().size() == 0) {
-				groupRepository.deleteById(id);
-			}*/
+			if(role.getAccount().size() == 0) {
+				roleRepository.deleteById(id);
+			}
 		}
 	}
 }
