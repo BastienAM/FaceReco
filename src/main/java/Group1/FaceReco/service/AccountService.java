@@ -15,6 +15,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import Group1.FaceReco.domain.Account;
@@ -31,6 +33,10 @@ public class AccountService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Retourne la liste des utilisateurs de l'application", response = Account.class)
 	public Iterable<Account> getAll() {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("AccountRead"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		return accountRepository.findAll();
 	}
 
@@ -39,6 +45,10 @@ public class AccountService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Retourne l'utilisateur correspondant à l'identifiant passé en paramaètre", response = Account.class)
 	public Optional<Account> getById(@ApiParam(value = "L'identifiant de l'utilisateur", required = true)@PathParam("id_group") long id) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("AccountRead"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		return accountRepository.findById(id);
 	}
 
@@ -46,6 +56,10 @@ public class AccountService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Ajoute un utilisateur")
 	public void create(@ApiParam(value = "L'utilisateur à ajouter", required = true)Account elem) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("AccountCreate"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		accountRepository.save(elem);
 	}
 
@@ -53,6 +67,10 @@ public class AccountService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Modifie un utilisateur")
 	public void update(@ApiParam(value = "L'utilisateur à modifier", required = true) Account elem) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("AccountUpdate"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		accountRepository.save(elem);
 	}
 
@@ -61,8 +79,10 @@ public class AccountService {
 	@ApiOperation(value = "Supprime un utilisateur")
 	public void delete(@ApiParam(value = "L'identifiant de l'utilisateur à supprimer", required = true) @PathParam("id") long id) {
 
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("AccountDelete"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		Optional<Account> optional = accountRepository.findById(id);
-
 		if (optional.isPresent()) {
 			accountRepository.deleteById(id);
 		}

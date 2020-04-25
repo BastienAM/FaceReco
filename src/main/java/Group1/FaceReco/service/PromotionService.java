@@ -15,8 +15,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import Group1.FaceReco.domain.Account;
 import Group1.FaceReco.domain.Promotion;
 import Group1.FaceReco.repository.PromotionRepository;
 
@@ -32,6 +35,10 @@ public class PromotionService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Retourne les promotions présentes dans la base de données", response = Promotion.class)
 	public Iterable<Promotion> getAllPromotion() {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("PromotionRead"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		return promotionRepository.findAll();
 	}
 	
@@ -40,6 +47,11 @@ public class PromotionService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Retourne la promotion correspondante à l'identifiant passé en paramètre", response = Promotion.class)
 	public Optional<Promotion> getPromotionById(@ApiParam(value = "L'identifiant de la promotion", required = true)@PathParam("id_promotion") long id) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("PromotionRead"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
+		
 		return promotionRepository.findById(id);
 	}
 	
@@ -47,6 +59,11 @@ public class PromotionService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Ajoute une promotion dans la base de données")
 	public void createPromotion(@ApiParam(value = "La promotion à ajouter", required = true)Promotion elem) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("PromotionCreate"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
+		
 		promotionRepository.save(elem);
 	}
 	
@@ -54,6 +71,11 @@ public class PromotionService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Modifie une promotion dans la base de données")
 	public void updatePromotion(@ApiParam(value = "La promotion à modifier", required = true)Promotion elem) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("PromotionUpdate"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
+		
 		promotionRepository.save(elem);
 	}
 	
@@ -61,6 +83,10 @@ public class PromotionService {
 	@Path("/{id_promotion}")
 	@ApiOperation(value = "Supprime une promotion dans la base de données")
 	public void deletePromotion(@ApiParam(value = "L'identifiant de la promotion à supprimer", required = true)@PathParam("id_promotion") long id) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("PromotionDelete"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		
 		Optional<Promotion> optionalPromotion = promotionRepository.findById(id);
 		

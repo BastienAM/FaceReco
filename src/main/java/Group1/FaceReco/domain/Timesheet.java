@@ -54,7 +54,7 @@ public class Timesheet {
 	}
 
 	//CascadeType.PERSIST permet d'enregistrer les presences a la création de la timesheet
-	@OneToMany(mappedBy = "id.timesheet",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "id.timesheet", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@JsonIgnoreProperties({"timesheet", "signature"})
 	@JsonProperty("presence")
 	public Set<Presence> getPresence() {

@@ -15,8 +15,11 @@ import javax.ws.rs.core.MediaType;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import Group1.FaceReco.domain.Account;
 import Group1.FaceReco.domain.Role;
 import Group1.FaceReco.repository.RoleRepository;
 
@@ -31,6 +34,10 @@ public class RoleService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Retourne les rôles définis dans la base de données", response = Role.class)
 	public Iterable<Role> getAll() {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("RoleRead"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		return roleRepository.findAll();
 	}
 	
@@ -39,6 +46,10 @@ public class RoleService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Retourne le rôle correspondant à l'identifiant passé en paramètre", response = Role.class)
 	public Optional<Role> getById(@ApiParam(value = "L'identifiant du rôle", required = true) @PathParam("id") long id) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("RoleRead"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		return roleRepository.findById(id);
 	}
 	
@@ -47,6 +58,10 @@ public class RoleService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Ajoute un rôle dans la base de données")
 	public void create(@ApiParam(value = "Le rôle à ajouter", required = true)Role elem) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("RoleCreate"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		roleRepository.save(elem);
 	}
 	
@@ -54,6 +69,10 @@ public class RoleService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Modifie un rôle dans la base de données")
 	public void update(@ApiParam(value = "Le rôle à modifier", required = true)Role elem) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("RoleUpdate"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		roleRepository.save(elem);
 	}
 	
@@ -61,6 +80,9 @@ public class RoleService {
 	@Path("/{id}")
 	@ApiOperation(value = "Supprime un rôle dans la base de données")
 	public void delete(@ApiParam(value = "L'identifiant du rôle à supprimer", required = true) @PathParam("id") long id) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("RoleDelete"))
+			throw new AccessDeniedException("You don't have the permission.");
 		
 		Optional<Role> optional = roleRepository.findById(id);
 		

@@ -2,6 +2,7 @@ package Group1.FaceReco.domain;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,7 +39,7 @@ public class Role {
 		this.wording = wording;
 	}
 	
-	@OneToMany(mappedBy = "id.role", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "id.role", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@JsonIgnoreProperties("role")
 	@JsonProperty("permission")
 	public Set<RoleRight> getRoleRight() {
@@ -58,6 +59,13 @@ public class Role {
 		this.account = account;
 	}
 	
-	
+	public boolean hasRight(String keyRight) {
+		for(RoleRight elem : roleRight) {
+			if(elem.getRight().getKey().equals(keyRight))
+				return elem.isAllow();
+		}
+		
+		return false;
+	}
 	
 }

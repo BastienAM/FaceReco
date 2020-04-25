@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Right {
 
 	private long id;
+	private String key;
 	private String wording;
 	private Set<RoleRight> roleRight;
 
@@ -28,6 +29,14 @@ public class Right {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+	
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getWording() {

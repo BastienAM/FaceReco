@@ -21,8 +21,11 @@ import javax.ws.rs.core.MediaType;
 
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import Group1.FaceReco.domain.Account;
 import Group1.FaceReco.domain.Group;
 import Group1.FaceReco.domain.Promotion;
 import Group1.FaceReco.domain.Student;
@@ -46,6 +49,10 @@ public class StudentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Retourne tous les étudiants contenues dans la base de données", response = Student.class)
 	public Iterable<Student> getAll() {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("StudentRead"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		return studentRepository.findAll();
 	}
 	
@@ -54,6 +61,10 @@ public class StudentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Retourne l'étudiant correspondant au numéro étudiant passé en paramètre", response = Student.class)
 	public Optional<Student> getById(@ApiParam(value = "Le numéro d'étudiant ", required = true)@PathParam("id") long id) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("StudentRead"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		return studentRepository.findById(id);
 	}
 	
@@ -61,6 +72,10 @@ public class StudentService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Ajoute un élève dans la base de données")
 	public void create(@ApiParam(value = "L'étudiant à ajouter", required = true)Student elem) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("StudentCreate"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		studentRepository.save(elem);
 	}
 	
@@ -68,6 +83,10 @@ public class StudentService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Modifie un élève dans la base de données")
 	public void update(@ApiParam(value = "L'étudiant à modifier", required = true)Student elem) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("StudentUpdate"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		studentRepository.save(elem);
 	}
 	
@@ -75,6 +94,9 @@ public class StudentService {
 	@Path("/{id}")
 	@ApiOperation(value = "Supprime un élève dans la base de données")
 	public void delete(@ApiParam(value = "Le numéro étudiant de l'élève à supprimer", required = true)@PathParam("id") long id) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("StudentDelete"))
+			throw new AccessDeniedException("You don't have the permission.");
 		
 		Optional<Student> optional = studentRepository.findById(id);
 		
@@ -91,6 +113,11 @@ public class StudentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Retourne la liste des élèves en lien avec un groupe", response = Student.class)
 	public Set<Student> getByGroup(@ApiParam(value = "L'identifiant du groupe", required = true)@PathParam("id") long id) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("StudentRead"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
+		
 		Optional<Group> optional = groupRepository.findById(id);
 		
 		if(optional.isPresent()) {
@@ -105,6 +132,11 @@ public class StudentService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ApiOperation(value = "Retourne la liste des élèves en lien avec une promotion", response = Student.class)
 	public Set<Student> getByPromotion(@ApiParam(value = "L'identifiant de la promotion", required = true)@PathParam("id") long id) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("StudentRead"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
+		
 		Optional<Promotion> optional = promotionRepository.findById(id);
 		
 		if(optional.isPresent()) {
