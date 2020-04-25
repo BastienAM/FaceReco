@@ -2,6 +2,7 @@ package main.java.Group1.FaceReco;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.BufferedReader;
@@ -11,43 +12,98 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.opencv.core.CvType.CV_32SC1;
 
 public class FaceRecoApplication {
-	enum YesNoEnum {
-		Yes("y"),
-		yes("y"),
-		Y("y"),
-		y("y"),
-		No("n"),
-		no("n"),
-		N("n"),
-		n("n");
 
-		private String stringAnswer;
+	Map<String, TimeSheet> timeSheetsMap = new HashMap<>();
 
-		private YesNoEnum(String answer) {
-			this.stringAnswer = answer;
+
+	MyFaceDetection myFaceDetection = new MyFaceDetection();
+	MyFaceRecognizer myFaceRecognizer = new MyFaceRecognizer();
+
+	Size minimumFaceSize;
+	Size universalFaceSize;
+
+	public FaceRecoApplication(Path cascadeClassifierPath, int minimumFaceSizeInt, int universalSizeFaceInt){
+		myFaceDetection.initCascadeClassifier(cascadeClassifierPath);
+
+		minimumFaceSize = new Size(minimumFaceSizeInt, minimumFaceSizeInt);
+		universalFaceSize = new Size(universalSizeFaceInt, universalSizeFaceInt);
+	}
+
+	public void newTimeSheet(String sheetName, List<Integer> studentsIDList){
+		timeSheetsMap.put(sheetName, new TimeSheet(studentsIDList));
+
+		/*Create and train a new group based on the list of students, need to be connected to the database for that*/
+		//- from student list, create a trainingSet
+		//- train and add the trainingset to the timeSheet
+	}
+
+	public void loadTimeSheet(String sheetName){
+		myFaceRecognizer.load(timeSheetsMap.get(sheetName).getTrainedGroupPath());
+	}
+	
+	public RecognitionResult recognition (Mat inputImage){
+		Mat equalizedImage = myFaceDetection.equalize(inputImage);
+		Mat detectedFace = myFaceDetection.detect(equalizedImage, minimumFaceSize, universalFaceSize);
+		RecognitionResult recognitionResult = new RecognitionResult();
+		myFaceRecognizer.predict(detectedFace, recognitionResult.label, recognitionResult.confidence);
+		return recognitionResult;
+	}
+
+	public void training(Path filePath) throws IllegalArgumentException {
+		File trainingFolder = new File(filePath.toString());
+		if (trainingFolder.exists() && trainingFolder.isDirectory()) {
+			File[] listOfFaces = trainingFolder.listFiles();
+
+			for (File file : listOfFaces) {
+				if (!file.getName().endsWith(".pgm")) {
+					throw new IllegalArgumentException("Given path contains other files than '.pgm'.");
+				}
+			}
+
+			List<Mat> src = new ArrayList<>();
+			Mat labels = new Mat(listOfFaces.length, 1, CV_32SC1);
+
+			int counter = 0;
+			for (File file : listOfFaces) {
+				Integer fileID = Integer.parseInt(file.getName().split("_")[0]);
+				labels.put(counter, 0, fileID);
+				src.add(Imgcodecs.imread(filePath.toString() + "\\" + file.getName(), Imgcodecs.IMREAD_GRAYSCALE));
+				counter++;
+			}
+
+			myFaceRecognizer.train(src, labels);
 		}
-
-		@Override
-		public String toString() {
-			return stringAnswer;
+		else{
+			throw new IllegalArgumentException("Given path either do not exist or is not a directory.");
 		}
 	}
+
+
+
+
+
+
+	/*
+
+	BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 	String groupPath = "groups\\";
 	String trainingPath = "trainingSets\\";
 	String testingPath = "testing\\";
 
-	FaceDetection faceDetection = new FaceDetection();
-	FaceRecognizer faceRecognizer = new FaceRecognizer();
 
-	BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+	public BufferedReader getReader() {
+		return reader;
+	}
 
 
 	public String getGroupPath() {
@@ -74,55 +130,6 @@ public class FaceRecoApplication {
 		this.testingPath = testingPath;
 	}
 
-	public FaceDetection getFaceDetection() {
-		return faceDetection;
-	}
-
-	public FaceRecognizer getFaceRecognizer() {
-		return faceRecognizer;
-	}
-
-	public BufferedReader getReader() {
-		return reader;
-	}
-
-	public void training(String filePath) throws IllegalArgumentException {
-		File trainingFolder = new File(filePath);
-		if (trainingFolder.exists() && trainingFolder.isDirectory()) {
-			File[] listOfFaces = trainingFolder.listFiles();
-
-			for (File file : listOfFaces) {
-				if (!file.getName().endsWith(".pgm")) {
-					throw new IllegalArgumentException("Given path contains other files than '.pgm'.");
-				}
-			}
-
-			List<Mat> src = new ArrayList<>();
-			Mat labels = new Mat(listOfFaces.length, 1, CV_32SC1);
-
-			int counter = 0;
-			for (File file : listOfFaces) {
-				Integer fileID = Integer.parseInt(file.getName().split("_")[0]);
-				labels.put(counter, 0, fileID);
-				src.add(Imgcodecs.imread(filePath + "\\" + file.getName(), Imgcodecs.IMREAD_GRAYSCALE));
-				counter++;
-			}
-
-			faceRecognizer.train(src, labels);
-		}
-		else{
-			throw new IllegalArgumentException("Given path either do not exist or is not a directory.");
-		}
-	}
-
-	public void identify(Mat inputImage, int[] label, double[] confidence){
-		faceRecognizer.predict(inputImage, label, confidence);
-	}
-
-	public Mat normalizeImage(Mat inputImage){
-		return inputImage;
-	}
-
 	public static String getNextValidInput(BufferedReader reader){
 		Boolean inputIsValid = false;
 		String input = null;
@@ -139,6 +146,28 @@ public class FaceRecoApplication {
 		}
 
 		return input;
+	}
+
+	enum YesNoEnum {
+		Yes("y"),
+		yes("y"),
+		Y("y"),
+		y("y"),
+		No("n"),
+		no("n"),
+		N("n"),
+		n("n");
+
+		private String stringAnswer;
+
+		private YesNoEnum(String answer) {
+			this.stringAnswer = answer;
+		}
+
+		@Override
+		public String toString() {
+			return stringAnswer;
+		}
 	}
 
 	public static void main(String[] args) {
@@ -181,7 +210,7 @@ public class FaceRecoApplication {
 				if(groupFile.exists() && groupFile.isFile()){
 					System.out.println("Loaded group " + inputGroupName + ", in file " + filePath);
 					Path pathToLoad = Paths.get(filePath);
-					faceRecoApp.getFaceRecognizer().load(pathToLoad);
+					faceRecoApp.getMyFaceRecognizer().load(pathToLoad);
 					inputIsValid = true;
 				}
 				else{
@@ -223,7 +252,7 @@ public class FaceRecoApplication {
 
 				try{
 					faceRecoApp.training(filePath);
-					faceRecoApp.getFaceRecognizer().save(Paths.get(trainedGroupPath));
+					faceRecoApp.getMyFaceRecognizer().save(Paths.get(trainedGroupPath));
 					System.out.println("Loaded group " + groupName + ", in file " + trainedGroupPath);
 					inputIsValid = true;
 				}catch (IllegalArgumentException e){
@@ -258,4 +287,5 @@ public class FaceRecoApplication {
 
 		}
 	}
+	*/
 }

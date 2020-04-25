@@ -11,7 +11,7 @@ import org.opencv.objdetect.Objdetect;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class FaceDetection {
+public class MyFaceDetection {
     CascadeClassifier faceCascade = null;
 
     /**
