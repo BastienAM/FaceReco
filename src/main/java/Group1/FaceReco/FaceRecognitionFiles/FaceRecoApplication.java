@@ -9,6 +9,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -16,32 +17,15 @@ import java.util.Set;
 import static org.opencv.core.CvType.CV_32SC1;
 
 public class FaceRecoApplication {
-
-	List<Timesheet> timeSheetsList = new ArrayList<Timesheet>();
-
-
 	MyFaceDetection myFaceDetection = new MyFaceDetection();
 	MyFaceRecognizer myFaceRecognizer = new MyFaceRecognizer();
 
 	float minimumFaceSizeProportion = 0.2f;
 	Size universalFaceSize = new Size(100, 100);
+	String cascadeClassifierPath = "";
 
-	public FaceRecoApplication(Path cascadeClassifierPath){
-		myFaceDetection.initCascadeClassifier(cascadeClassifierPath);
-	}
-
-	public void newTimeSheet(int sheetId, List<Integer> studentsIDList){
-		Timesheet newTimeSheet = new Timesheet();
-		newTimeSheet.setId(sheetId);
-		timeSheetsList.add(newTimeSheet);
-
-		/*Create and train a new group based on the list of students, need to be connected to the database for that*/
-		//- from student list, create a trainingSet
-		//- train and add the trainingset to the timeSheet
-	}
-
-	public void loadTimeSheet(int sheetid){
-		//myFaceRecognizer.load(timeSheetsList.get(sheetid).getTrainedGroupPath());
+	public FaceRecoApplication(){
+		myFaceDetection.initCascadeClassifier(Paths.get(cascadeClassifierPath));
 	}
 
 	public RecognitionResult recognition (Mat inputImage){
@@ -53,38 +37,51 @@ public class FaceRecoApplication {
 		return recognitionResult;
 	}
 
-	public void training(Path filePath) throws IllegalArgumentException {
-		File trainingFolder = new File(filePath.toString());
-		if (trainingFolder.exists() && trainingFolder.isDirectory()) {
-			File[] listOfFaces = trainingFolder.listFiles();
+	public void training(List<Long> studentsIdList) throws IllegalArgumentException {
 
-			for (File file : listOfFaces) {
-				if (!file.getName().endsWith(".pgm")) {
-					throw new IllegalArgumentException("Given path contains other files than '.pgm'.");
+		for(Long studentId : studentsIdList){
+
+			List<File> listOfFaces = new ArrayList<>();
+			String pathToPhoto = "photo\\" + studentId.toString();
+			File currentPhotosFile = new File(pathToPhoto);
+
+			if(currentPhotosFile.exists() && currentPhotosFile.isDirectory()){
+
+				File[] listFiles = currentPhotosFile.listFiles();
+
+				for(File file : listFiles){
+					if (!file.getName().endsWith(".pgm")) { //search how to convert all image to .pgm
+						throw new IllegalArgumentException("The file of the student " + studentId + " contains other files than '.pgm'.");
+					}
+					listOfFaces.add(file);
 				}
+			}
+			else{
+				throw new IllegalArgumentException("The file of the student " + studentId + "  do not exist or is not a directory.");
 			}
 
 			List<Mat> src = new ArrayList<>();
-			Mat labels = new Mat(listOfFaces.length, 1, CV_32SC1);
+			Mat labels = new Mat(listOfFaces.size(), 1, CV_32SC1);
 
 			int counter = 0;
 			for (File file : listOfFaces) {
 				Integer fileID = Integer.parseInt(file.getName().split("_")[0]);
 				labels.put(counter, 0, fileID);
-				src.add(Imgcodecs.imread(filePath.toString() + "\\" + file.getName(), Imgcodecs.IMREAD_GRAYSCALE));
+				src.add(Imgcodecs.imread(pathToPhoto + "\\" + file.getName(), Imgcodecs.IMREAD_GRAYSCALE));
 				counter++;
 			}
 
 			myFaceRecognizer.train(src, labels);
 		}
-		else{
-			throw new IllegalArgumentException("Given path either do not exist or is not a directory.");
-		}
 	}
 
+	public void save(Path path){
+		myFaceRecognizer.save(path);
+	}
 
-
-
+	public void load(Path path){
+		myFaceRecognizer.load(path);
+	}
 
 
 	/*

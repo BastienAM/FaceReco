@@ -1,10 +1,12 @@
 package Group1.FaceReco.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -16,8 +18,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import Group1.FaceReco.FaceRecognitionFiles.FaceRecoApplication;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.face.Face;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -82,7 +89,9 @@ public class TimesheetService {
 		
 		Set<Presence> presence = new HashSet<Presence>();
 		Iterable<Student> iterableStudent  = studentRepository.findAllById(elem.getStudent());
-		
+
+		List<Long> studentsIdList = new ArrayList<>();
+
 		for(Student student : iterableStudent) {
 			PresenceId pi = new PresenceId();
 			pi.setStudent(student);
@@ -90,7 +99,14 @@ public class TimesheetService {
 			Presence p = new Presence();
 			p.setId(pi);
 			presence.add(p);
+
+			studentsIdList.add(student.getNumber());
 		}
+
+		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
+		faceRecoApplication.training(studentsIdList);
+		faceRecoApplication.save(Paths.get("context\\" + timesheet.getId() + ".xml"));
+
 		timesheet.setPresence(presence);
 		timesheet.setAccount(account);
 		timesheetRepository.save(timesheet);
@@ -127,7 +143,36 @@ public class TimesheetService {
 	@Consumes({"image/gif","image/jpeg","image/png","application/octet-stream"})
 	@ApiOperation(value = "Reconnaît un élève par reconnaissance faciale")
 	public void recognition(@PathParam("id") long id, InputStream file) {
-		System.out.println(id);
-		System.out.println(file);
+		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
+		faceRecoApplication.load(Paths.get("context\\" + id + ".xml"));
+
+		try {
+			byte[] temporaryImageInMemory = readStream(file);
+
+			Mat inputImage = Imgcodecs.imdecode(new MatOfByte(temporaryImageInMemory), Imgcodecs.IMREAD_GRAYSCALE);
+			faceRecoApplication.recognition(inputImage);
+			System.out.println(id);
+			System.out.println(file);
+		}
+		catch (IOException e){
+			System.out.println("An error occurred while reading the image.");
+		}
+	}
+
+	private static byte[] readStream(InputStream stream) throws IOException {
+		// Copy content of the image to byte-array
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		int nRead;
+		byte[] data = new byte[16384];
+
+		while ((nRead = stream.read(data, 0, data.length)) != -1) {
+			buffer.write(data, 0, nRead);
+		}
+
+		buffer.flush();
+		byte[] temporaryImageInMemory = buffer.toByteArray();
+		buffer.close();
+		stream.close();
+		return temporaryImageInMemory;
 	}
 }
