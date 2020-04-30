@@ -17,6 +17,8 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import Group1.FaceReco.domain.Account;
@@ -60,6 +62,8 @@ public class AccountService {
 		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("AccountCreate"))
 			throw new AccessDeniedException("You don't have the permission.");
 		
+		PasswordEncoder encoder = new BCryptPasswordEncoder();
+		elem.setPassword(encoder.encode(elem.getPassword()));
 		accountRepository.save(elem);
 	}
 
@@ -71,7 +75,14 @@ public class AccountService {
 		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("AccountUpdate"))
 			throw new AccessDeniedException("You don't have the permission.");
 		
+		Optional<Account> optional = accountRepository.findById(elem.getId());
+		if(optional.isPresent()) {
+			if(!optional.get().getPassword().equals(elem.getPassword())) {
+				PasswordEncoder encoder = new BCryptPasswordEncoder();
+				elem.setPassword(encoder.encode(elem.getPassword()));
+			}
 		accountRepository.save(elem);
+		}
 	}
 
 	@DELETE

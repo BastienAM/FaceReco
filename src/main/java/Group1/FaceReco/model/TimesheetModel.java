@@ -1,14 +1,10 @@
 package Group1.FaceReco.model;
 
-import java.sql.Timestamp;
 import java.util.Set;
-
-import Group1.FaceReco.domain.Account;
 
 public class TimesheetModel {
 	private long id;
 	private String date;
-	private Account account;
 	private Set<Long> student;
 	
 	public long getId() {
@@ -23,12 +19,6 @@ public class TimesheetModel {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	public Account getAccount() {
-		return account;
-	}
-	public void setAccount(Account account) {
-		this.account = account;
-	}
 	public Set<Long> getStudent() {
 		return student;
 	}
@@ -37,7 +27,7 @@ public class TimesheetModel {
 	}
 	@Override
 	public String toString() {
-		return "TimesheetModel [id=" + id + ", date=" + date + ", account=" + account + ", student=" + student + "]";
+		return "TimesheetModel [id=" + id + ", date=" + date + ", student=" + student + "]";
 	}
 	
 }
