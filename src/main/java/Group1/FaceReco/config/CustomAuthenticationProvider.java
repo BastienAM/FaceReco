@@ -8,6 +8,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import Group1.FaceReco.domain.Account;
@@ -21,13 +23,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+		
+		PasswordEncoder encoder = new BCryptPasswordEncoder();
+		
 		String name = authentication.getName();
 		String password = authentication.getCredentials().toString();
 
 		List<Account> list = accountRepository.findByUsername(name);
+		
 		for(Account account : list) {
-			System.out.println(account);
-			if(account.getPassword().equals(password))
+			if(encoder.matches(password, account.getPassword()))
 				return new UsernamePasswordAuthenticationToken(account, password, new ArrayList<>());
 		}
 		

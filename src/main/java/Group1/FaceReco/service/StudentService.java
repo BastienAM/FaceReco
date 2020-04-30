@@ -156,6 +156,10 @@ public class StudentService {
 	@Produces(MediaType.TEXT_PLAIN)
 	@ApiOperation(value = "Ajoute une photo à un étudiant")
 	public void addPhoto(@ApiParam(value = "L'image à ajouter", required = true)InputStream file) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("StudentUpdate"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
 		System.out.println("add Image");
 		if(file != null)
 			System.out.println("non nulle");
