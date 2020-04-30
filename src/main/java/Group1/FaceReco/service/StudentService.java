@@ -21,6 +21,8 @@ import javax.ws.rs.core.MediaType;
 
 import Group1.FaceReco.FaceRecognitionFiles.FaceRecoApplication;
 import io.swagger.annotations.*;
+
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -32,9 +34,11 @@ import org.springframework.stereotype.Service;
 import Group1.FaceReco.domain.Account;
 import Group1.FaceReco.domain.Group;
 import Group1.FaceReco.domain.Promotion;
+import Group1.FaceReco.domain.Signature;
 import Group1.FaceReco.domain.Student;
 import Group1.FaceReco.repository.GroupRepository;
 import Group1.FaceReco.repository.PromotionRepository;
+import Group1.FaceReco.repository.SignatureRepository;
 import Group1.FaceReco.repository.StudentRepository;
 
 import static Group1.FaceReco.utils.StreamReaderFunctions.readStream;
@@ -50,6 +54,8 @@ public class StudentService {
 	private GroupRepository groupRepository;
 	@Autowired
 	private PromotionRepository promotionRepository;
+	@Autowired
+	private SignatureRepository signatureRepository;
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -83,6 +89,8 @@ public class StudentService {
 			throw new AccessDeniedException("You don't have the permission.");
 		
 		studentRepository.save(elem);
+		
+		new File("./photo/"+elem.getNumber()).mkdirs();
 	}
 	
 	@PUT
@@ -110,6 +118,12 @@ public class StudentService {
 			Student student = optional.get();
 			if(student.getPresence().size() == 0) {
 				studentRepository.deleteById(id);
+				
+				try {
+					FileUtils.deleteDirectory(new File("./photo/"+student.getNumber()));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -161,16 +175,19 @@ public class StudentService {
 	@Consumes({"image/gif","image/jpeg","image/png","application/octet-stream"})
 	@Produces(MediaType.TEXT_PLAIN)
 	@ApiOperation(value = "Ajoute une photo à un étudiant")
-	public void addPhoto(@ApiParam(value = "L'image à ajouter", required = true)InputStream file) {
+	public void addPhoto(@ApiParam(value = "L'image à ajouter", required = true)InputStream file, @PathParam("id") long id) {
 
 		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("StudentUpdate"))
 			throw new AccessDeniedException("You don't have the permission.");
+
+		Optional<Student> optional = studentRepository.findById(id);
 		
-		System.out.println("add Image");
-		if(file != null)
-			System.out.println("non nulle");
-
-
+		Student student = optional.get();
+		Signature sign = new Signature();
+		sign.setInformation("qqzfqzf");
+		sign.setStudent(student);
+		signatureRepository.save(sign);
+		
 		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
 
 		try {
@@ -178,7 +195,7 @@ public class StudentService {
 
 			Mat inputImage = Imgcodecs.imdecode(new MatOfByte(temporaryImageInMemory), Imgcodecs.IMREAD_GRAYSCALE);
 			Mat treatedImage = faceRecoApplication.imageTreatment(inputImage);
-			Imgcodecs.imwrite("chemin ou enregister la photo, avec nom de la photo et finissant par .pgm", treatedImage);
+			Imgcodecs.imwrite("./photo/"+id+"/" +sign.getId()+".pgm", treatedImage);
 
 		}
 		catch (IOException e){

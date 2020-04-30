@@ -2,6 +2,7 @@ package Group1.FaceReco.domain;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -74,7 +75,7 @@ public class Student {
 		this.presence = presence;
 	}
 
-	@OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "student",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@JsonIgnoreProperties("student")
 	@JsonIgnore
 	public Set<Signature> getSignature() {
