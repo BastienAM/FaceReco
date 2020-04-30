@@ -22,7 +22,7 @@ public class FaceRecoApplication {
 
 	float minimumFaceSizeProportion = 0.2f;
 	Size universalFaceSize = new Size(100, 100);
-	String cascadeClassifierPath = "";
+	String cascadeClassifierPath = ".\\src\\main\\resources\\haarcascade\\haarcascade_frontalface_default.xml";
 
 	public FaceRecoApplication(){
 		myFaceDetection.initCascadeClassifier(Paths.get(cascadeClassifierPath));
