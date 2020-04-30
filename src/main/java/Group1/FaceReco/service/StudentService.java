@@ -19,7 +19,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import Group1.FaceReco.FaceRecognitionFiles.FaceRecoApplication;
 import io.swagger.annotations.*;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +36,8 @@ import Group1.FaceReco.domain.Student;
 import Group1.FaceReco.repository.GroupRepository;
 import Group1.FaceReco.repository.PromotionRepository;
 import Group1.FaceReco.repository.StudentRepository;
+
+import static Group1.FaceReco.utils.StreamReaderFunctions.readStream;
 
 @Service
 @Path("/student")
@@ -156,15 +162,31 @@ public class StudentService {
 	@Produces(MediaType.TEXT_PLAIN)
 	@ApiOperation(value = "Ajoute une photo à un étudiant")
 	public void addPhoto(@ApiParam(value = "L'image à ajouter", required = true)InputStream file) {
-		
+
 		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("StudentUpdate"))
 			throw new AccessDeniedException("You don't have the permission.");
 		
 		System.out.println("add Image");
 		if(file != null)
 			System.out.println("non nulle");
+
+
+		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
+
+		try {
+			byte[] temporaryImageInMemory = readStream(file);
+
+			Mat inputImage = Imgcodecs.imdecode(new MatOfByte(temporaryImageInMemory), Imgcodecs.IMREAD_GRAYSCALE);
+			Mat treatedImage = faceRecoApplication.imageTreatment(inputImage);
+			Imgcodecs.imwrite("chemin ou enregister la photo, avec nom de la photo et finissant par .pgm", treatedImage);
+
+		}
+		catch (IOException e){
+			System.out.println("An error occurred while reading the image.");
+		}
+
 	}
-	
+
 	/**
 	 * Utility method to save InputStream data to target location/file
 	 * 

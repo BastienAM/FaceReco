@@ -39,6 +39,8 @@ import Group1.FaceReco.model.TimesheetModel;
 import Group1.FaceReco.repository.StudentRepository;
 import Group1.FaceReco.repository.TimesheetRepository;
 
+import static Group1.FaceReco.utils.StreamReaderFunctions.readStream;
+
 @Service
 @Path("/timesheet")
 public class TimesheetService {
@@ -157,22 +159,5 @@ public class TimesheetService {
 		catch (IOException e){
 			System.out.println("An error occurred while reading the image.");
 		}
-	}
-
-	private static byte[] readStream(InputStream stream) throws IOException {
-		// Copy content of the image to byte-array
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		int nRead;
-		byte[] data = new byte[16384];
-
-		while ((nRead = stream.read(data, 0, data.length)) != -1) {
-			buffer.write(data, 0, nRead);
-		}
-
-		buffer.flush();
-		byte[] temporaryImageInMemory = buffer.toByteArray();
-		buffer.close();
-		stream.close();
-		return temporaryImageInMemory;
 	}
 }
