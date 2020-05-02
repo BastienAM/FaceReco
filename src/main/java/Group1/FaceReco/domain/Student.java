@@ -23,7 +23,7 @@ public class Student {
 	private String firstName;
 	private Group group;
 	private Set<Presence> presence;
-	private Set<Signature> signature;
+	private Set<Photo> photo;
 
 	@Id
 	public long getNumber() {
@@ -78,11 +78,11 @@ public class Student {
 	@OneToMany(mappedBy = "student",cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	@JsonIgnoreProperties("student")
 	@JsonIgnore
-	public Set<Signature> getSignature() {
-		return signature;
+	public Set<Photo> getPhoto() {
+		return photo;
 	}
 
-	public void setSignature(Set<Signature> signature) {
-		this.signature = signature;
+	public void setPhoto(Set<Photo> photo) {
+		this.photo = photo;
 	}
 }

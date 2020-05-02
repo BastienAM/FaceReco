@@ -34,7 +34,7 @@ import org.springframework.stereotype.Service;
 import Group1.FaceReco.domain.Account;
 import Group1.FaceReco.domain.Group;
 import Group1.FaceReco.domain.Promotion;
-import Group1.FaceReco.domain.Signature;
+import Group1.FaceReco.domain.Photo;
 import Group1.FaceReco.domain.Student;
 import Group1.FaceReco.repository.GroupRepository;
 import Group1.FaceReco.repository.PromotionRepository;
@@ -183,8 +183,7 @@ public class StudentService {
 		Optional<Student> optional = studentRepository.findById(id);
 		
 		Student student = optional.get();
-		Signature sign = new Signature();
-		sign.setInformation("qqzfqzf");
+		Photo sign = new Photo();
 		sign.setStudent(student);
 		signatureRepository.save(sign);
 		

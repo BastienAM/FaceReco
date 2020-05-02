@@ -9,9 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Signature {
+public class Photo {
 	private long id;
-	private String Information;
 	private Student student;
 	
 	@Id
@@ -22,12 +21,6 @@ public class Signature {
 	}
 	public void setId(long id) {
 		this.id = id;
-	}
-	public String getInformation() {
-		return Information;
-	}
-	public void setInformation(String information) {
-		Information = information;
 	}
 	
 	@ManyToOne(optional=false)

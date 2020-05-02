@@ -2,8 +2,8 @@ package Group1.FaceReco.repository;
 
 import org.springframework.data.repository.CrudRepository;
 
-import Group1.FaceReco.domain.Signature;
+import Group1.FaceReco.domain.Photo;
 
-public interface SignatureRepository extends CrudRepository<Signature,Long>{
+public interface SignatureRepository extends CrudRepository<Photo,Long>{
 
 }
