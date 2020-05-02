@@ -145,6 +145,11 @@ public class TimesheetService {
 	@Consumes({"image/gif","image/jpeg","image/png","application/octet-stream"})
 	@ApiOperation(value = "Reconnaît un élève par reconnaissance faciale")
 	public void recognition(@PathParam("id") long id, InputStream file) {
+		
+		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("Recognition"))
+			throw new AccessDeniedException("You don't have the permission.");
+		
+		
 		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
 		faceRecoApplication.load(Paths.get("context\\" + id + ".xml"));
 
