@@ -12,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import Group1.FaceReco.repository.RoleRepository;
 
 @Service
 @Path("/role")
+@Api(value = "Service API")
 public class RoleService {
 	
 	@Autowired

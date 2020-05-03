@@ -1,7 +1,4 @@
 package Group1.FaceReco.service;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
@@ -19,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import Group1.FaceReco.FaceRecognitionFiles.FaceRecoApplication;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.opencv.core.Mat;
@@ -43,6 +41,7 @@ import static Group1.FaceReco.utils.StreamReaderFunctions.readStream;
 
 @Service
 @Path("/timesheet")
+@Api(value = "Timesheet API")
 public class TimesheetService {
 	
 	@Autowired
