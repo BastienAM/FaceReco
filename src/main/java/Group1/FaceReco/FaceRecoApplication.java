@@ -9,20 +9,19 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FaceRecoApplication {
 
 	public static void main(String[] args) {
-		//System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		//System.loadLibrary("src/main/resources/opencv_contrib/opencv_java420.dll");
-		//System.load("C:/Users/Basti/git/FaceReco/src/main/resources/opencv_contrib/opencv_java420.dll");
 		
-		String absolute = null;
-		
+		//Chargement de la librairie native d'openCV_contrib.
+		String absolutePath = null;
 		try {
-			absolute = new File("./src/main/resources/opencv_contrib/opencv_java420.dll").getCanonicalPath();
+			absolutePath = new File("./src/main/resources/opencv_contrib/opencv_java420.dll").getCanonicalPath();
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.exit(-1);
 		}
 		
-		System.load(absolute);
+		System.load(absolutePath);
 		
+		//Création des dossiers s'ils existent pas 
 		new File("./context").mkdirs();
 		new File("./photo").mkdirs();
 		
