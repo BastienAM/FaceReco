@@ -16,12 +16,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import Group1.FaceReco.FaceRecognitionFiles.FaceRecoApplication;
+import Group1.FaceReco.FaceRecognitionFiles.RecognitionResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
-import org.opencv.face.Face;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -83,10 +83,10 @@ public class TimesheetService {
 		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("TimesheetCreate"))
 			throw new AccessDeniedException("You don't have the permission.");
 		
-		Timesheet timesheet = new Timesheet();
-		timesheet.setDate(Timestamp.valueOf(elem.getDate()));
 		
 		Account account = (Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		Timesheet timesheet = new Timesheet();
 		
 		Set<Presence> presence = new HashSet<Presence>();
 		Iterable<Student> iterableStudent  = studentRepository.findAllById(elem.getStudent());
@@ -106,10 +106,12 @@ public class TimesheetService {
 
 		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
 		faceRecoApplication.training(studentsIdList);
-		faceRecoApplication.save(Paths.get("context\\" + timesheet.getId() + ".xml"));
+		faceRecoApplication.save(Paths.get("./context/" + timesheet.getId() + ".xml"));
 
+		timesheet.setDate(Timestamp.valueOf(elem.getDate()));
 		timesheet.setPresence(presence);
 		timesheet.setAccount(account);
+		
 		timesheetRepository.save(timesheet);
 	}
 	
@@ -143,25 +145,30 @@ public class TimesheetService {
 	@Path("/{id}/recognition")
 	@Consumes({"image/gif","image/jpeg","image/png","application/octet-stream"})
 	@ApiOperation(value = "Reconnaît un élève par reconnaissance faciale")
-	public void recognition(@PathParam("id") long id, InputStream file) {
+	public Optional<Student> recognition(@PathParam("id") long id, InputStream file) {
 		
 		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("Recognition"))
 			throw new AccessDeniedException("You don't have the permission.");
 		
 		
 		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
-		faceRecoApplication.load(Paths.get("context\\" + id + ".xml"));
+		faceRecoApplication.load(Paths.get("./context/" + id + ".xml"));
 
 		try {
 			byte[] temporaryImageInMemory = readStream(file);
 
 			Mat inputImage = Imgcodecs.imdecode(new MatOfByte(temporaryImageInMemory), Imgcodecs.IMREAD_GRAYSCALE);
-			faceRecoApplication.recognition(inputImage);
-			System.out.println(id);
-			System.out.println(file);
+			RecognitionResult recognitionResult = faceRecoApplication.recognition(inputImage);
+			
+			
+			recognitionResult.getLabelBetterConfidence();
+			
+			return studentRepository.findById((long) recognitionResult.getLabelBetterConfidence());
 		}
 		catch (IOException e){
 			System.out.println("An error occurred while reading the image.");
 		}
+		
+		return null;
 	}
 }
