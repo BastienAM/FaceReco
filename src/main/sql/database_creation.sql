@@ -88,6 +88,7 @@ CREATE TABLE Photo (
 CREATE TABLE Timesheet (
 	PK serial NOT NULL,
 	Date TIMESTAMP NOT NULL,
+	Wording varchar(255) NULL,
 	FK_Account integer NOT NULL,
 	CONSTRAINT "Timesheet_pk" PRIMARY KEY (PK)
 ) WITH (

@@ -22,6 +22,7 @@ public class Timesheet {
 	private long id;
 	private Timestamp date;
 	private Account account;
+	private String wording;
 	private Set<Presence> presence;
 
 	@Id
@@ -51,6 +52,14 @@ public class Timesheet {
 
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+	
+	public String getWording() {
+		return wording;
+	}
+
+	public void setWording(String wording) {
+		this.wording = wording;
 	}
 
 	//CascadeType.PERSIST permet d'enregistrer les presences a la création de la timesheet
