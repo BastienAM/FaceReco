@@ -193,9 +193,9 @@ public class StudentService {
 		Optional<Student> optional = studentRepository.findById(id);
 
 		Student student = optional.get();
-		Photo sign = new Photo();
-		sign.setStudent(student);
-		signatureRepository.save(sign);
+		Photo photo = new Photo();
+		photo.setStudent(student);
+		signatureRepository.save(photo);
 
 		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
 
@@ -204,7 +204,7 @@ public class StudentService {
 
 			Mat inputImage = Imgcodecs.imdecode(new MatOfByte(temporaryImageInMemory), Imgcodecs.IMREAD_GRAYSCALE);
 			Mat treatedImage = faceRecoApplication.imageTreatment(inputImage);
-			Imgcodecs.imwrite("./photo/" + id + "/" + sign.getId() + ".pgm", treatedImage);
+			Imgcodecs.imwrite("./photo/" + id + "/" + photo.getId() + ".pgm", treatedImage);
 
 		} catch (IOException e) {
 			System.out.println("An error occurred while reading the image.");

@@ -9,8 +9,17 @@ import javax.persistence.ManyToOne;
 public class PresenceId implements Serializable{
 
 	private Timesheet timesheet;
-	private Student student;
+	private Student student;	
 	
+	public PresenceId() {
+		super();
+	}
+	
+	public PresenceId(Timesheet timesheet, Student student) {
+		super();
+		this.timesheet = timesheet;
+		this.student = student;
+	}
 	@ManyToOne
 	public Timesheet getTimesheet() {
 		return timesheet;

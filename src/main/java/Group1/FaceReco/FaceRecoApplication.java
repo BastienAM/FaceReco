@@ -24,6 +24,7 @@ public class FaceRecoApplication {
 		//Création des dossiers s'ils existent pas 
 		new File("./context").mkdirs();
 		new File("./photo").mkdirs();
+		new File("./tmp").mkdirs();
 		
 		SpringApplication.run(FaceRecoApplication.class, args);
 	}

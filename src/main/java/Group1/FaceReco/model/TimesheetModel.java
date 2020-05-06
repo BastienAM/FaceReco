@@ -5,6 +5,7 @@ import java.util.Set;
 public class TimesheetModel {
 	private long id;
 	private String date;
+	private String wording;
 	private Set<Long> student;
 	
 	public long getId() {
@@ -18,6 +19,12 @@ public class TimesheetModel {
 	}
 	public void setDate(String date) {
 		this.date = date;
+	}
+	public String getWording() {
+		return wording;
+	}
+	public void setWording(String wording) {
+		this.wording = wording;
 	}
 	public Set<Long> getStudent() {
 		return student;

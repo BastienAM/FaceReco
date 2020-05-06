@@ -19,16 +19,4 @@ public class RecognitionResult {
 	public void setConfidence(double[] confidence) {
 		this.confidence = confidence;
 	}
-
-	public int getLabelBetterConfidence() {
-		int index = -1;
-		double betterConfidence = 0;
-		for (int i = 0; i < confidence.length - 1; i++) {
-			if (confidence[i] > betterConfidence) {
-				betterConfidence = confidence[i];
-				index = i;
-			}
-		}
-		return label[index];
-	}
 }
