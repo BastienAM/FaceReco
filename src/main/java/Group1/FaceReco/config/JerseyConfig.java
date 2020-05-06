@@ -37,7 +37,7 @@ public class JerseyConfig extends ResourceConfig{
 
 		BeanConfig bean = new BeanConfig();
 		bean.setTitle("Face Reco API ");
-		bean.setSchemes(new String[]{"http","https"});
+		bean.setSchemes(new String[]{"http"});
 		bean.setHost("localhost:8080");
 		bean.setBasePath("/api");
 		bean.setResourcePackage("Group1.FaceReco");
