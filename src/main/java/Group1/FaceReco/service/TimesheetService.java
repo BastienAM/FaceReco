@@ -59,7 +59,7 @@ public class TimesheetService {
 
 	@Autowired
 	private PresenceRepository presenceRepository;
-	
+
 	@Autowired
 	private SignatureRepository signatureRepository;
 
@@ -100,6 +100,8 @@ public class TimesheetService {
 
 		Account account = (Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+		// Création de la feuille de présence en assignant les étudiants qui doivent
+		// être présents
 		Timesheet timesheet = new Timesheet();
 
 		Set<Presence> presence = new HashSet<Presence>();
@@ -118,6 +120,8 @@ public class TimesheetService {
 			studentsIdList.add(student.getNumber());
 		}
 
+		// Création du contexte avec les étudiants de la feuille de présence et
+		// l'enregistre dans le dossier context
 		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
 		faceRecoApplication.training(studentsIdList);
 		faceRecoApplication.save(Paths.get("./context/" + timesheet.getId() + ".xml"));
@@ -157,7 +161,7 @@ public class TimesheetService {
 				newStudent.add(it.next());
 			}
 
-			// Si les étudiants ont changés, on recrée le contexte et les presences
+			// Si les étudiants ont changés, on recrée le contexte et les présences
 			if (!currentStudent.equals(newStudent)) {
 				presenceRepository.deleteAll(timesheet.getPresence());
 
@@ -177,6 +181,7 @@ public class TimesheetService {
 					studentsIdList.add(student.getNumber());
 				}
 
+				// On supprime l'ancien contexte et en recrée un nouveau
 				FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
 				faceRecoApplication.training(studentsIdList);
 
@@ -210,42 +215,49 @@ public class TimesheetService {
 
 		if (optional.isPresent()) {
 			timesheetRepository.deleteById(id);
+
+			// On supprime le contexte en relation avec la feuille de présence.
+			File file = new File("./context/" + id + ".xml");
+			file.delete();
 		}
 	}
 
 	@POST
 	@Path("/{id}/recognition")
 	@Consumes({ "image/gif", "image/jpeg", "image/png", "application/octet-stream" })
-	@ApiOperation(value = "Reconnaît un élève par reconnaissance faciale")
+	@ApiOperation(value = "Reconnaît un élève par reconnaissance faciale", response = Student.class)
 	public Student recognition(@PathParam("id") long id, InputStream file) {
 
 		if (!((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole()
 				.hasRight("Recognition"))
 			throw new AccessDeniedException("You don't have the permission.");
 
+		
 		Optional<Timesheet> optionalTimesheet = timesheetRepository.findById(id);
-		Timesheet timesheet = null;
 
-		if (optionalTimesheet.isPresent())
-			timesheet = optionalTimesheet.get();
-		else
+		if (!optionalTimesheet.isPresent())
 			return null;
 
+		//On ouvre le context de la feuille de présence
 		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
 		faceRecoApplication.load(Paths.get("./context/" + id + ".xml"));
 
 		try {
+			//On utilise la photo en paramètre pour la reconnaissance faciale
 			byte[] temporaryImageInMemory = readStream(file);
-
 			Mat inputImage = Imgcodecs.imdecode(new MatOfByte(temporaryImageInMemory), Imgcodecs.IMREAD_GRAYSCALE);
 			RecognitionResult recognitionResult = faceRecoApplication.recognition(inputImage);
 
+			
 			Optional<Student> optionalStudent = studentRepository.findById((long) recognitionResult.getLabel()[0]);
 			Student student = null;
 
 			if (optionalStudent.isPresent())
 				student = optionalStudent.get();
-
+			else
+				return null;
+			
+			//Enregistre la photo après traitement dans le dossier tmp en attente de validation
 			Mat treatedImage = faceRecoApplication.imageTreatment(inputImage);
 			Imgcodecs.imwrite("./tmp/" + id + "-" + student.getNumber() + ".pgm", treatedImage);
 
@@ -261,7 +273,12 @@ public class TimesheetService {
 	@POST
 	@Path("/validatePresence")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@ApiOperation(value = "Valide une présence dans la base de données")
 	public void validatePresence(PresenceModel elem) {
+
+		if (!((Account) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole()
+				.hasRight("TimesheetUpdate"))
+			throw new AccessDeniedException("You don't have the permission.");
 
 		Timesheet timesheet = new Timesheet();
 		timesheet.setId(elem.getTimesheet());
@@ -269,9 +286,7 @@ public class TimesheetService {
 		Student student = new Student();
 		student.setNumber(elem.getStudent());
 
-		PresenceId presenceId = new PresenceId(timesheet, student);
-
-		Optional<Presence> optional = presenceRepository.findById(presenceId);
+		Optional<Presence> optional = presenceRepository.findById(new PresenceId(timesheet, student));
 
 		Presence presence = null;
 
@@ -281,20 +296,28 @@ public class TimesheetService {
 			return;
 
 		if (elem.isPresent()) {
-			java.nio.file.Path path = Paths.get("./tmp/" + presence.getTimesheet().getId() + "-" + presence.getStudent().getNumber()+ ".pgm");
-			
-			if(path.toFile().exists()) {
+			//On regarde si la photo temporaire existe, et on la déplace dans le bon dossier
+			java.nio.file.Path path = Paths
+					.get("./tmp/" + presence.getTimesheet().getId() + "-" + presence.getStudent().getNumber() + ".pgm");
+
+			if (path.toFile().exists()) {
 				Photo photo = new Photo();
 				photo.setStudent(presence.getStudent());
 				signatureRepository.save(photo);
-				
+
 				try {
-					Files.move(path, Paths.get("./photo/" + presence.getStudent().getNumber() + "/" + photo.getId() + ".pgm"));
+					Files.move(path,
+							Paths.get("./photo/" + presence.getStudent().getNumber() + "/" + photo.getId() + ".pgm"));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-		} 
+			
+		}else {
+			//On supprime la photo temporaire
+			File file = new File("./tmp/" + presence.getTimesheet().getId() + "-" + presence.getStudent().getNumber() + ".pgm");
+			file.delete();
+		}
 
 		presence.setPresent(elem.isPresent());
 		presenceRepository.save(presence);

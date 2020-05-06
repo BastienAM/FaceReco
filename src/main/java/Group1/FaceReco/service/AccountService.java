@@ -45,7 +45,7 @@ public class AccountService {
 	@GET
 	@Path("/{id_group}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ApiOperation(value = "Retourne l'utilisateur correspondant à l'identifiant passé en paramaètre", response = Account.class)
+	@ApiOperation(value = "Retourne l'utilisateur correspondant à l'identifiant passé en paramètre", response = Account.class)
 	public Optional<Account> getById(@ApiParam(value = "L'identifiant de l'utilisateur", required = true)@PathParam("id_group") long id) {
 		
 		if(!((Account)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getRole().hasRight("AccountRead"))
@@ -77,6 +77,7 @@ public class AccountService {
 		
 		Optional<Account> optional = accountRepository.findById(elem.getId());
 		if(optional.isPresent()) {
+			//Si le mdp est différent, on le remplace en le chiffrant
 			if(!optional.get().getPassword().equals(elem.getPassword())) {
 				PasswordEncoder encoder = new BCryptPasswordEncoder();
 				elem.setPassword(encoder.encode(elem.getPassword()));
