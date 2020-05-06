@@ -37,6 +37,9 @@ public class FaceRecoApplication {
 
 	public void training(List<Long> studentsIdList) throws IllegalArgumentException {
 
+		List<Mat> src = new ArrayList<>();
+		List<Long> labelsList = new ArrayList<>();
+
 		for(Long studentId : studentsIdList){
 
 			List<File> listOfFaces = new ArrayList<>();
@@ -58,19 +61,23 @@ public class FaceRecoApplication {
 				throw new IllegalArgumentException("The file of the student " + studentId + "  do not exist or is not a directory.");
 			}
 
-			List<Mat> src = new ArrayList<>();
-			Mat labels = new Mat(listOfFaces.size(), 1, CV_32SC1);
-
-			int counter = 0;
 			for (File file : listOfFaces) {
 				Integer fileID = Integer.parseInt(file.getName().split("_")[0]);
-				labels.put(counter, 0, fileID);
+				labelsList.add(Long.valueOf(fileID));
 				src.add(Imgcodecs.imread(pathToPhoto + "\\" + file.getName(), Imgcodecs.IMREAD_GRAYSCALE));
-				counter++;
 			}
-
-			myFaceRecognizer.train(src, labels);
 		}
+
+
+		Mat labels = new Mat(labelsList.size(), 1, CV_32SC1);
+
+		int counter = 0;
+		for(Long currentLabel : labelsList){
+			labels.put(counter, 0, currentLabel);
+			counter++;
+		}
+
+		myFaceRecognizer.train(src, labels);
 	}
 
 	public void save(Path path){
@@ -81,9 +88,15 @@ public class FaceRecoApplication {
 		myFaceRecognizer.load(path);
 	}
 
-    public Mat imageTreatment(Mat inputImage){
+    public Mat imageTreatment(Mat inputImage)  throws IllegalArgumentException {
         Mat equalizedImage = myFaceDetection.equalize(inputImage);
         Size minimumFaceSize = new Size(equalizedImage.width() * minimumFaceSizeProportion, equalizedImage.height() * minimumFaceSizeProportion);
-        return myFaceDetection.detect(equalizedImage, minimumFaceSize, universalFaceSize);
+
+        Mat detectedFace = myFaceDetection.detect(equalizedImage, minimumFaceSize, universalFaceSize);
+
+        if(detectedFace == null){
+			throw new IllegalArgumentException("No face detected in the given image.");
+		}
+        return detectedFace;
     }
 }

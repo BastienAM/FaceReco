@@ -1,8 +1,8 @@
 package Group1.FaceReco.FaceRecognitionFiles;
 
 public class RecognitionResult {
-	int[] label;
-	double[] confidence;
+	int[] label = new int[1];
+	double[] confidence = new double[1];
 
 	public int[] getLabel() {
 		return label;
