@@ -20,6 +20,7 @@ import javax.ws.rs.ApplicationPath;
 @ApplicationPath("/api")
 public class JerseyConfig extends ResourceConfig{
 
+	// Ajout des classes de services et de la documentation
 	public JerseyConfig() {
 		register(StudentService.class);
 		register(PromotionService.class);

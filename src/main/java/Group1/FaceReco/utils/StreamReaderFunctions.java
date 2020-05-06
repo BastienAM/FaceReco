@@ -5,6 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class StreamReaderFunctions {
+	
+	/**
+	 * Convertie un InputStream en tableau de byte.
+	 * @param stream
+	 * @return
+	 * @throws IOException
+	 */
     public static byte[] readStream(InputStream stream) throws IOException {
         // Copy content of the image to byte-array
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();

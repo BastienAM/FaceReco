@@ -15,6 +15,11 @@ import org.springframework.stereotype.Component;
 import Group1.FaceReco.domain.Account;
 import Group1.FaceReco.repository.AccountRepository;
 
+/**
+ * 
+ * Basic Authentification avec BCrypt et la base de données
+ *
+ */
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 

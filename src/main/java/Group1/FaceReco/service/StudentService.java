@@ -1,10 +1,8 @@
 package Group1.FaceReco.service;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -93,7 +91,8 @@ public class StudentService {
 			throw new AccessDeniedException("You don't have the permission.");
 
 		studentRepository.save(elem);
-
+		
+		//Crée le dossier correspondant à l'étudiant
 		new File("./photo/" + elem.getNumber()).mkdirs();
 	}
 
@@ -126,6 +125,7 @@ public class StudentService {
 			if (student.getPresence().size() == 0) {
 				studentRepository.deleteById(id);
 
+				//Supprime le dossier et les photos dans son dossier
 				try {
 					FileUtils.deleteDirectory(new File("./photo/" + student.getNumber()));
 				} catch (IOException e) {
@@ -192,6 +192,7 @@ public class StudentService {
 
 		Optional<Student> optional = studentRepository.findById(id);
 
+		//Ajoute une photo dans la base de données
 		Student student = optional.get();
 		Photo photo = new Photo();
 		photo.setStudent(student);
@@ -199,6 +200,7 @@ public class StudentService {
 
 		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
 
+		//Fait les traitement sur l'image et l'enregistre dans le bon dossier
 		try {
 			byte[] temporaryImageInMemory = readStream(file);
 
