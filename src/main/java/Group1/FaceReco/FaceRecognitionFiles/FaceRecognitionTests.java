@@ -2,8 +2,6 @@ package Group1.FaceReco.FaceRecognitionFiles;
 
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
-import sun.applet.Main;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;

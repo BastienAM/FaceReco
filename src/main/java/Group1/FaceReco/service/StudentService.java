@@ -200,7 +200,7 @@ public class StudentService {
 
 		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
 
-		//Fait les traitement sur l'image et l'enregistre dans le bon dossier
+		//Fait les traitements sur l'image et l'enregistre dans le bon dossier
 		try {
 			byte[] temporaryImageInMemory = readStream(file);
 

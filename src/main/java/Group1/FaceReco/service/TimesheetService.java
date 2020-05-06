@@ -20,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 
 import Group1.FaceReco.FaceRecognitionFiles.FaceRecoApplication;
 import Group1.FaceReco.FaceRecognitionFiles.RecognitionResult;
+import Group1.FaceReco.repository.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -39,10 +40,6 @@ import Group1.FaceReco.domain.Student;
 import Group1.FaceReco.domain.Timesheet;
 import Group1.FaceReco.model.PresenceModel;
 import Group1.FaceReco.model.TimesheetModel;
-import Group1.FaceReco.repository.PresenceRepository;
-import Group1.FaceReco.repository.SignatureRepository;
-import Group1.FaceReco.repository.StudentRepository;
-import Group1.FaceReco.repository.TimesheetRepository;
 
 import static Group1.FaceReco.utils.StreamReaderFunctions.readStream;
 
@@ -62,6 +59,9 @@ public class TimesheetService {
 
 	@Autowired
 	private SignatureRepository signatureRepository;
+
+	@Autowired
+	private PhotoRepository photoRepository;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -120,18 +120,18 @@ public class TimesheetService {
 			studentsIdList.add(student.getNumber());
 		}
 
-		// Création du contexte avec les étudiants de la feuille de présence et
-		// l'enregistre dans le dossier context
-		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
-		faceRecoApplication.training(studentsIdList);
-		faceRecoApplication.save(Paths.get("./context/" + timesheet.getId() + ".xml"));
-
 		timesheet.setDate(Timestamp.valueOf(elem.getDate()));
 		timesheet.setWording(elem.getWording());
 		timesheet.setPresence(presence);
 		timesheet.setAccount(account);
 
 		timesheetRepository.save(timesheet);
+
+		// Création du contexte avec les étudiants de la feuille de présence et
+		// l'enregistre dans le dossier context
+		FaceRecoApplication faceRecoApplication = new FaceRecoApplication();
+		faceRecoApplication.training(studentsIdList);
+		faceRecoApplication.save(Paths.get("./context/" + timesheet.getId() + ".xml"));
 	}
 
 	@PUT
@@ -248,8 +248,15 @@ public class TimesheetService {
 			Mat inputImage = Imgcodecs.imdecode(new MatOfByte(temporaryImageInMemory), Imgcodecs.IMREAD_GRAYSCALE);
 			RecognitionResult recognitionResult = faceRecoApplication.recognition(inputImage);
 
+			Optional<Photo> optionalPhoto = photoRepository.findById((long) recognitionResult.getLabel()[0]);
+			Photo photo = null;
+
+			if (optionalPhoto.isPresent())
+				photo = optionalPhoto.get();
+			else
+				return null;
 			
-			Optional<Student> optionalStudent = studentRepository.findById((long) recognitionResult.getLabel()[0]);
+			Optional<Student> optionalStudent = studentRepository.findById(photo.getStudent().getNumber());
 			Student student = null;
 
 			if (optionalStudent.isPresent())

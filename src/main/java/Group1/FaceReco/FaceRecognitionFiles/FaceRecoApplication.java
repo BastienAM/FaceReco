@@ -62,7 +62,7 @@ public class FaceRecoApplication {
 			}
 
 			for (File file : listOfFaces) {
-				Integer fileID = Integer.parseInt(file.getName().split("_")[0]);
+				Integer fileID = Integer.parseInt(file.getName().split(".pgm")[0]);
 				labelsList.add(Long.valueOf(fileID));
 				src.add(Imgcodecs.imread(pathToPhoto + "\\" + file.getName(), Imgcodecs.IMREAD_GRAYSCALE));
 			}
