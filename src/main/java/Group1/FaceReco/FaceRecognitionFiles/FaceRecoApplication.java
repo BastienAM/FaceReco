@@ -42,7 +42,6 @@ public class FaceRecoApplication {
 
 		for(Long studentId : studentsIdList){
 
-			List<File> listOfFaces = new ArrayList<>();
 			String pathToPhoto = "photo\\" + studentId.toString();
 			File currentPhotosFile = new File(pathToPhoto);
 
@@ -54,17 +53,13 @@ public class FaceRecoApplication {
 					if (!file.getName().endsWith(".pgm")) { //search how to convert all image to .pgm
 						throw new IllegalArgumentException("The file of the student " + studentId + " contains other files than '.pgm'.");
 					}
-					listOfFaces.add(file);
+
+					labelsList.add(Long.valueOf(studentId));
+					src.add(Imgcodecs.imread(pathToPhoto + "\\" + file.getName(), Imgcodecs.IMREAD_GRAYSCALE));
 				}
 			}
 			else{
 				throw new IllegalArgumentException("The file of the student " + studentId + "  do not exist or is not a directory.");
-			}
-
-			for (File file : listOfFaces) {
-				Integer fileID = Integer.parseInt(file.getName().split(".pgm")[0]);
-				labelsList.add(Long.valueOf(fileID));
-				src.add(Imgcodecs.imread(pathToPhoto + "\\" + file.getName(), Imgcodecs.IMREAD_GRAYSCALE));
 			}
 		}
 
