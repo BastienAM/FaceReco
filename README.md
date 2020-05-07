@@ -23,4 +23,4 @@ Modifier vos identifiants :
 
 ## Lancer le projet
 
-Lancer la classe main dans `src/main/java/Group1/FaceReco`.
+Lancer la classe main `FaceRecoApplication.java` dans `src/main/java/Group1/FaceReco`.
