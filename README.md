@@ -33,3 +33,7 @@ Un utilisateur administrateur est créé avec comme identifiant pour vous connec
 `username : admin`
 `mdp : admin`
 
+## Documentation API
+
+`localhost:8080`
+
