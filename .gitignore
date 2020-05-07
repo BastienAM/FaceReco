@@ -29,3 +29,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### dossier photo et contexte ###
+context/
+photo/
+tmp/
+
+bin/
