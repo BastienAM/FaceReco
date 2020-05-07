@@ -256,14 +256,8 @@ public class TimesheetService {
 			else
 				return null;
 			
-			Optional<Student> optionalStudent = studentRepository.findById(photo.getStudent().getNumber());
-			Student student = null;
+			Student student = photo.getStudent();
 
-			if (optionalStudent.isPresent())
-				student = optionalStudent.get();
-			else
-				return null;
-			
 			//Enregistre la photo après traitement dans le dossier tmp en attente de validation
 			Mat treatedImage = faceRecoApplication.imageTreatment(inputImage);
 			Imgcodecs.imwrite("./tmp/" + id + "-" + student.getNumber() + ".pgm", treatedImage);
