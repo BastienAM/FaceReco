@@ -11,6 +11,7 @@ Ordre d'utilisation des scripts dans `src/main/sql` :
 2. trigger.sql
 3. right.sql
 4. role_account.sql
+5. data.sql
 
 
 ## Configuration du projet
@@ -24,3 +25,15 @@ Modifier vos identifiants :
 ## Lancer le projet
 
 Lancer la classe main `FaceRecoApplication.java` dans `src/main/java/Group1/FaceReco`.
+
+
+## Utilisateur de l'application
+
+Un utilisateur administrateur est créé avec comme identifiant pour vous connecter à l'API :
+`username : admin`
+`mdp : admin`
+
+## Documentation API
+
+`localhost:8080`
+
