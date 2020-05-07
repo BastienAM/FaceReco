@@ -24,10 +24,18 @@ public class FaceRecoApplication {
 	Size universalFaceSize = new Size(100, 100);
 	String cascadeClassifierPath = ".\\src\\main\\resources\\haarcascade\\haarcascade_frontalface_default.xml";
 
+    /**
+     * Initialize the cascadeclassifier
+     */
 	public FaceRecoApplication(){
 		myFaceDetection.initCascadeClassifier(Paths.get(cascadeClassifierPath));
 	}
 
+    /**
+     * Try to recognize a face on a given image (need to have a context loaded)
+     * @param inputImage image to find face
+     * @return RecognitionResult with label of recognized face, plus its confidence
+     */
 	public RecognitionResult recognition (Mat inputImage){
 		Mat detectedFace = imageTreatment(inputImage);
 		RecognitionResult recognitionResult = new RecognitionResult();
@@ -35,6 +43,11 @@ public class FaceRecoApplication {
 		return recognitionResult;
 	}
 
+    /**
+     * Train "myFaceRecognizer" based on the list of IDs given
+     * @param studentsIdList list of IDs to train with
+     * @throws IllegalArgumentException Throw if an error occur while searching the files
+     */
 	public void training(List<Long> studentsIdList) throws IllegalArgumentException {
 
 		List<Mat> src = new ArrayList<>();
@@ -75,14 +88,28 @@ public class FaceRecoApplication {
 		myFaceRecognizer.train(src, labels);
 	}
 
+    /**
+     * Save context to given path
+     * @param path path to save the context
+     */
 	public void save(Path path){
 		myFaceRecognizer.save(path);
 	}
 
+    /**
+     * Load context from given path
+     * @param path path to context to load
+     */
 	public void load(Path path){
 		myFaceRecognizer.load(path);
 	}
 
+    /**
+     * Treat an image and if a face is detected, return a square Mat of "universalFaceSize"
+     * @param inputImage untreated image
+     * @return an equalized Mat centered on the face
+     * @throws IllegalArgumentException if not face is detected on the image
+     */
     public Mat imageTreatment(Mat inputImage)  throws IllegalArgumentException {
         Mat equalizedImage = myFaceDetection.equalize(inputImage);
         Size minimumFaceSize = new Size(equalizedImage.width() * minimumFaceSizeProportion, equalizedImage.height() * minimumFaceSizeProportion);
@@ -90,7 +117,7 @@ public class FaceRecoApplication {
         Mat detectedFace = myFaceDetection.detect(equalizedImage, minimumFaceSize, universalFaceSize);
 
         if(detectedFace == null){
-			throw new IllegalArgumentException("No face detected in the given image.");
+			throw new IllegalArgumentException("No face detected in the given image. (verify the format of you image) ");
 		}
         return detectedFace;
     }

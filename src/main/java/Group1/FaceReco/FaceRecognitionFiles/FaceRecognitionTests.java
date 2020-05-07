@@ -10,32 +10,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FaceRecognitionTests {
+
+    /**
+     * This class is for test purposes, it's really messy and is not meant to be used seriously (many things are hardcoded...)
+     * If you want to use it and don't understand anything, contact edgar.lebreton.35@gmail.com
+     */
+
     FaceRecoApplication recoApp = new FaceRecoApplication();
 
     List<Long> idsToTest = new ArrayList<>();
 
+    /**
+     * Initialize the ids for the test
+     */
     public FaceRecognitionTests(){
         for(int i = 0; i < 25; i++){
             idsToTest.add(new Long(i + 15));
         }
     }
 
+    /**
+     * Train "recoApp" with initialized ids
+     */
     public void train(){
         recoApp.training(idsToTest);
     }
 
+    /**
+     * Save the context
+     */
     public void save(){
         String stringPath = "context\\testContext.xml";
         Path testContextPath = Paths.get(stringPath);
         recoApp.save(testContextPath);
     }
 
+    /**
+     * Load the context
+     */
     public void load(){
         String stringPath = "context\\testContext.xml";
         Path testContextPath = Paths.get(stringPath);
         recoApp.load(testContextPath);
     }
 
+    /**
+     * Allow to bypass studentService by treating all the photo in the list of ids to treat (some may not recognize a face, and must be deleted afterward)
+     * @throws IllegalArgumentException Throw if an error occur while searching the files
+     */
     public void treatAllPhotos() throws IllegalArgumentException {
         for(Long currentID : idsToTest){
             String pathToPhoto = "photo\\" + currentID.toString();
@@ -64,11 +86,19 @@ public class FaceRecognitionTests {
         }
     }
 
+    /**
+     * Try to recognize a face on a given image (need to have a context trained or loaded)
+     * @param inputImage Image to recognize face
+     * @return RecognitionResult with label of recognized face, plus its confidence
+     */
     public RecognitionResult recognize(Mat inputImage){
         return recoApp.recognition(inputImage);
     }
 
-
+    /**
+     * Test all the photos in the "photo\testing" folder (need to have a context trained or loaded)
+     * @return the percentage of photo that have been well recognized
+     */
     public float testAll(){
         List<Long> allIdsToTest = new ArrayList<>();
         allIdsToTest = idsToTest;
