@@ -11,6 +11,7 @@ Ordre d'utilisation des scripts dans `src/main/sql` :
 2. trigger.sql
 3. right.sql
 4. role_account.sql
+5. data.sql
 
 
 ## Configuration du projet
