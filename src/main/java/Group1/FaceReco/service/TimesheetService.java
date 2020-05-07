@@ -248,15 +248,13 @@ public class TimesheetService {
 			Mat inputImage = Imgcodecs.imdecode(new MatOfByte(temporaryImageInMemory), Imgcodecs.IMREAD_GRAYSCALE);
 			RecognitionResult recognitionResult = faceRecoApplication.recognition(inputImage);
 
-			Optional<Photo> optionalPhoto = photoRepository.findById((long) recognitionResult.getLabel()[0]);
-			Photo photo = null;
+			Optional<Student> optionalStudent = studentRepository.findById((long) recognitionResult.getLabel()[0]);
+			Student student = null;
 
-			if (optionalPhoto.isPresent())
-				photo = optionalPhoto.get();
+			if (optionalStudent.isPresent())
+				student = optionalStudent.get();
 			else
 				return null;
-			
-			Student student = photo.getStudent();
 
 			//Enregistre la photo après traitement dans le dossier tmp en attente de validation
 			Mat treatedImage = faceRecoApplication.imageTreatment(inputImage);
