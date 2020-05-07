@@ -33,5 +33,6 @@ build/
 ### dossier photo et contexte ###
 context/
 photo/
+tmp/
 
 bin/
