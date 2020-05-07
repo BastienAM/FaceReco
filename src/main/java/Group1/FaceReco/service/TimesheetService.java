@@ -224,7 +224,7 @@ public class TimesheetService {
 
 	@POST
 	@Path("/{id}/recognition")
-	@Consumes({ "image/gif", "image/jpeg", "image/png", "application/octet-stream" })
+	@Consumes({"image/jpeg", "image/png", "application/octet-stream" })
 	@ApiOperation(value = "Reconnaît un élève par reconnaissance faciale", response = Student.class)
 	public Student recognition(@PathParam("id") long id, InputStream file) {
 

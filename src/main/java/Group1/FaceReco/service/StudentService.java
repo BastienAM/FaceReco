@@ -180,7 +180,7 @@ public class StudentService {
 
 	@POST
 	@Path("/{id}/photo")
-	@Consumes({ "image/gif", "image/jpeg", "image/png", "application/octet-stream" })
+	@Consumes({"image/jpeg", "image/png", "application/octet-stream" })
 	@Produces(MediaType.TEXT_PLAIN)
 	@ApiOperation(value = "Ajoute une photo à un étudiant")
 	public void addPhoto(@ApiParam(value = "L'image à ajouter", required = true) InputStream file,
