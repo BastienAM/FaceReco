@@ -24,3 +24,11 @@ Modifier vos identifiants :
 ## Lancer le projet
 
 Lancer la classe main `FaceRecoApplication.java` dans `src/main/java/Group1/FaceReco`.
+
+
+## Utilisateur de l'application
+
+Un utilisateur administrateur est créé avec comme identifiant pour vous connecter à l'API :
+username : admin
+mdp : admin
+
