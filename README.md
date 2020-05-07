@@ -29,6 +29,6 @@ Lancer la classe main `FaceRecoApplication.java` dans `src/main/java/Group1/Face
 ## Utilisateur de l'application
 
 Un utilisateur administrateur est créé avec comme identifiant pour vous connecter à l'API :
-username : admin
-mdp : admin
+`username : admin`
+`mdp : admin`
 
