@@ -21,10 +21,10 @@ Importer le projet `File > Import...` en tant que `Existing Maven Projects`.
 
 Dans la console à la racine du projet (besoin de maven):
 
-`mvn install:install-file -Dfile=opencv_contrib-4.2.jar -DgroupId=org -DartifactId=opencv_contrib -Dversion=4.2 -Dpackaging=jar`
-
-`mvn install:install-file -Dfile=opencv_contrib-4.2.dll -DgroupId=org -DartifactId=opencv_contrib -Dversion=4.2 -Dpackaging=dll -DgeneratePom=true`
-
+```
+mvn install:install-file -Dfile=opencv_contrib-4.2.jar -DgroupId=org -DartifactId=opencv_contrib -Dversion=4.2 -Dpackaging=jar
+mvn install:install-file -Dfile=opencv_contrib-4.2.dll -DgroupId=org -DartifactId=opencv_contrib -Dversion=4.2 -Dpackaging=dll -DgeneratePom=true
+```
 
 Clic-droit sur le projet `Build Path > Configure Build Path...`
 
@@ -41,9 +41,12 @@ Cliquer sur le bouton `External Folder...` et sélectionner le dossier `opencv_c
 
 Dans le fichier `application.properties` dans le répertoire `src/main/resources` :
 
-Modifier vos identifiants de connexion:
-`spring.datasource.username=postgres`
-`spring.datasource.password=root`
+Modifier vos identifiants de connexion :
+
+```
+spring.datasource.username=postgres
+spring.datasource.password=root
+```
 
 ## Lancer le projet
 
@@ -53,8 +56,11 @@ Lancer la classe main `FaceRecoApplication.java` dans `src/main/java/Group1/Face
 ## Utilisateur de l'application
 
 Un utilisateur administrateur est créé avec comme identifiant pour vous connecter à l'API :
-`username : admin`
-`mdp : admin`
+
+```
+username : admin
+mdp : admin
+```
 
 ## Documentation API
 
@@ -64,14 +70,14 @@ Un utilisateur administrateur est créé avec comme identifiant pour vous connec
 
 Dans la console à la racine du projet (besoin de maven):
 
-`mvn compile`
-
-`mvn package`
-
+```
+mvn compile
+mvn package
+```
 
 ## Lancer le projet compiler
 
 Dans la console à la racine du projet (besoin de java):
 
-`java   -Djava.library.path=target\native -jar target\FaceReco-1.0.0-SNAPSHOT.jar`
+`java -Djava.library.path=target\native -jar target\FaceReco-1.0.0-SNAPSHOT.jar`
 
