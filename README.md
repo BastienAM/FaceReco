@@ -22,8 +22,8 @@ Importer le projet `File > Import...` en tant que `Existing Maven Projects`.
 Dans la console à la racine du projet (besoin de maven):
 
 ```
-mvn install:install-file -Dfile=opencv_contrib-4.2.jar -DgroupId=org -DartifactId=opencv_contrib -Dversion=4.2 -Dpackaging=jar
-mvn install:install-file -Dfile=opencv_contrib-4.2.dll -DgroupId=org -DartifactId=opencv_contrib -Dversion=4.2 -Dpackaging=dll -DgeneratePom=true
+mvn install:install-file -Dfile=src\main\resources\opencv_contrib\opencv_contrib-4.2.jar -DgroupId=org -DartifactId=opencv_contrib -Dversion=4.2 -Dpackaging=jar
+mvn install:install-file -Dfile=src\main\resources\opencv_contrib\opencv_contrib-4.2.dll -DgroupId=org -DartifactId=opencv_contrib -Dversion=4.2 -Dpackaging=dll -DgeneratePom=true
 ```
 
 Clic-droit sur le projet `Build Path > Configure Build Path...`
