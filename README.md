@@ -64,7 +64,7 @@ mdp : admin
 
 ## Documentation API
 
-`localhost:8080`
+La documentation de l'API se trouve à l'adresse `localhost:8080`
 
 ## Compiler le projet
 
