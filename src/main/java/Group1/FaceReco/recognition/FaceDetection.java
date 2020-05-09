@@ -1,4 +1,4 @@
-package Group1.FaceReco.FaceRecognitionFiles;
+package Group1.FaceReco.recognition;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
@@ -11,7 +11,7 @@ import org.opencv.objdetect.Objdetect;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class MyFaceDetection {
+public class FaceDetection {
     CascadeClassifier faceCascade = null;
 
     /**

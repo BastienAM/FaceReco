@@ -1,4 +1,4 @@
-package Group1.FaceReco.FaceRecognitionFiles;
+package Group1.FaceReco.recognition;
 
 public class RecognitionResult {
 	int[] label = new int[1];
