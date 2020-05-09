@@ -15,6 +15,9 @@ import Group1.FaceReco.service.StudentService;
 import Group1.FaceReco.service.TimesheetService;
 
 import javax.ws.rs.ApplicationPath;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 @Configuration
 @ApplicationPath("/api")
@@ -36,13 +39,36 @@ public class JerseyConfig extends ResourceConfig{
 		this.register(ApiListingResource.class);
 		this.register(SwaggerSerializers.class);
 
+		String scheme = this.getPropertiesValues("scheme");
+		String host = this.getPropertiesValues("host");
+		String res = this.getPropertiesValues("resourcePackage");
+
 		BeanConfig bean = new BeanConfig();
 		bean.setTitle("Face Reco API ");
-		bean.setSchemes(new String[]{"http"});
-		bean.setHost("localhost:8080");
+		bean.setSchemes(new String[]{scheme});
+		bean.setHost(host);
 		bean.setBasePath("/api");
-		bean.setResourcePackage("Group1.FaceReco");
+		bean.setResourcePackage(res);
 		bean.setPrettyPrint(true);
 		bean.setScan(true);
+	}
+
+	private String getPropertiesValues(String property) {
+		Properties properties = new Properties();
+		String file = "application.properties";
+		String ret = "";
+
+		try {
+			InputStream stream = getClass().getClassLoader().getResourceAsStream(file);
+			if (stream != null) {
+				properties.load(stream);
+				ret = properties.getProperty(property);
+			}
+			stream.close();
+		}
+		catch (IOException e) {
+
+		}
+		return ret;
 	}
 }
