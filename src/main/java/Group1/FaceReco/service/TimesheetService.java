@@ -18,8 +18,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import Group1.FaceReco.FaceRecognitionFiles.FaceRecoApplication;
-import Group1.FaceReco.FaceRecognitionFiles.RecognitionResult;
 import Group1.FaceReco.repository.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +38,8 @@ import Group1.FaceReco.domain.Student;
 import Group1.FaceReco.domain.Timesheet;
 import Group1.FaceReco.model.PresenceModel;
 import Group1.FaceReco.model.TimesheetModel;
+import Group1.FaceReco.recognition.FaceRecoApplication;
+import Group1.FaceReco.recognition.RecognitionResult;
 
 import static Group1.FaceReco.utils.StreamReaderFunctions.readStream;
 

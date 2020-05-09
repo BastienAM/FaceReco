@@ -1,7 +1,4 @@
-package Group1.FaceReco.FaceRecognitionFiles;
-
-import Group1.FaceReco.domain.Presence;
-import Group1.FaceReco.domain.Timesheet;
+package Group1.FaceReco.recognition;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -12,13 +9,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static org.opencv.core.CvType.CV_32SC1;
 
 public class FaceRecoApplication {
-	MyFaceDetection myFaceDetection = new MyFaceDetection();
-	MyFaceRecognizer myFaceRecognizer = new MyFaceRecognizer();
+	FaceDetection myFaceDetection = new FaceDetection();
+	FaceRecognizer myFaceRecognizer = new FaceRecognizer();
 
 	float minimumFaceSizeProportion = 0.2f;
 	Size universalFaceSize = new Size(100, 100);

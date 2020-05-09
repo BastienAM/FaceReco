@@ -1,4 +1,4 @@
-package Group1.FaceReco.FaceRecognitionFiles;
+package Group1.FaceReco.recognition;
 
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;

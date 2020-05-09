@@ -17,7 +17,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import Group1.FaceReco.FaceRecognitionFiles.FaceRecoApplication;
 import io.swagger.annotations.*;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
@@ -34,6 +33,7 @@ import Group1.FaceReco.domain.Group;
 import Group1.FaceReco.domain.Promotion;
 import Group1.FaceReco.domain.Photo;
 import Group1.FaceReco.domain.Student;
+import Group1.FaceReco.recognition.FaceRecoApplication;
 import Group1.FaceReco.repository.GroupRepository;
 import Group1.FaceReco.repository.PromotionRepository;
 import Group1.FaceReco.repository.SignatureRepository;

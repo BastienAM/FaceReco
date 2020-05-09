@@ -1,4 +1,4 @@
-package Group1.FaceReco.FaceRecognitionFiles;
+package Group1.FaceReco.recognition;
 
 import org.opencv.core.Mat;
 import org.opencv.face.FisherFaceRecognizer;
@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class MyFaceRecognizer {
+public class FaceRecognizer {
     FisherFaceRecognizer recognizer = FisherFaceRecognizer.create();
 
     /**
